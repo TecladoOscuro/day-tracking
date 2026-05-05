@@ -6,6 +6,14 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  background-color: #f9fafb;
+}
+
+html.dark {
+  background-color: #030712;
+}
+
 html, body {
   overscroll-behavior-y: contain;
   touch-action: manipulation;

@@ -12,8 +12,10 @@ export function useTheme() {
     const root = document.documentElement;
     if (theme === 'dark') {
       root.classList.add('dark');
+      root.style.backgroundColor = '#030712';
     } else {
       root.classList.remove('dark');
+      root.style.backgroundColor = '#f9fafb';
     }
     const color = theme === 'dark' ? '#111827' : '#f9fafb';
     const meta = document.querySelector('meta[name="theme-color"]');

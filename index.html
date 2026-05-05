@@ -14,9 +14,13 @@
     <script>
       (function() {
         var theme = localStorage.getItem('daytracking-theme') || 'dark';
-        if (theme === 'dark') document.documentElement.classList.add('dark');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
         var color = theme === 'dark' ? '#111827' : '#f9fafb';
-        document.querySelector('meta[name="theme-color"]').content = color;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', color);
+        document.documentElement.style.backgroundColor = theme === 'dark' ? '#030712' : '#f9fafb';
       })();
     </script>
   </head>
