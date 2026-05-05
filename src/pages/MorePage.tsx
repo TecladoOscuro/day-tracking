@@ -66,10 +66,11 @@ export default function MorePage() {
   ];
 
   return (
-    <div className="px-4 pt-6 pb-4">
-      <h1 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Más</h1>
+    <div className="h-full flex flex-col">
+      <div className="px-4 pt-6 pb-2 shrink-0 bg-gray-50 dark:bg-gray-950">
+        <h1 className="text-xl font-bold text-gray-800 dark:text-white mb-3">Más</h1>
 
-      <div className="flex gap-1 flex-wrap mb-4">
+        <div className="flex gap-1 flex-wrap">
         {tabs.map((t) => (
           <button
             key={t.key}
@@ -84,6 +85,9 @@ export default function MorePage() {
           </button>
         ))}
       </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 pb-24 overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
 
       {section === 'goals' && (
         <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-4">
@@ -420,6 +424,7 @@ export default function MorePage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

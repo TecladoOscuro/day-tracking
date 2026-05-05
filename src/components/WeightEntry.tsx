@@ -75,21 +75,23 @@ export default function WeightEntry({
     onClose();
   };
 
+  const inputClass = 'w-full px-3 py-2.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none';
+
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md shadow-xl">
-        <div className="px-5 pt-4 pb-2 border-b flex items-center justify-between">
-          <h3 className="font-bold text-lg">Registrar peso</h3>
+      <div className="bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md shadow-xl">
+        <div className="px-5 pt-4 pb-2 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+          <h3 className="font-bold text-lg text-gray-900 dark:text-white">Registrar peso</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-2xl leading-none"
           >
             ×
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
-            <label htmlFor="weight-date" className="block text-sm font-medium text-gray-600 mb-1">
+            <label htmlFor="weight-date" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
               Fecha
             </label>
             <input
@@ -97,11 +99,11 @@ export default function WeightEntry({
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+              className={inputClass + ' [color-scheme:dark]'}
             />
           </div>
           <div>
-            <label htmlFor="weight-kg" className="block text-sm font-medium text-gray-600 mb-1">
+            <label htmlFor="weight-kg" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
               Peso (kg)
             </label>
             <input
@@ -113,12 +115,12 @@ export default function WeightEntry({
               step="0.1"
               min={30}
               max={300}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+              className={inputClass}
               autoFocus
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
               Foto (opcional)
             </label>
             {photoError && (
@@ -134,7 +136,7 @@ export default function WeightEntry({
                 <button
                   type="button"
                   onClick={() => setPhoto('')}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs"
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs shadow"
                 >
                   ×
                 </button>
@@ -143,7 +145,7 @@ export default function WeightEntry({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="px-4 py-3 border-2 border-dashed border-gray-300 rounded-xl text-sm text-gray-400 hover:border-indigo-400 hover:text-indigo-500 w-full"
+                className="px-4 py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-sm text-gray-400 dark:text-gray-500 hover:border-indigo-400 hover:text-indigo-500 w-full transition-colors"
               >
                 📸 Tomar foto o elegir de galería
               </button>
@@ -157,7 +159,7 @@ export default function WeightEntry({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
               Nota (opcional)
             </label>
             <input
@@ -165,12 +167,12 @@ export default function WeightEntry({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Ej. Después de entrenar, en ayunas..."
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+              className={inputClass}
             />
           </div>
           <button
             type="submit"
-            className="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 shadow"
+            className="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 active:scale-[0.98] transition-all shadow"
           >
             Guardar
           </button>

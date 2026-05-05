@@ -74,16 +74,17 @@ export default function ProgressPage() {
   };
 
   return (
-    <div className="px-4 pt-6 pb-4">
-      <h1 className="text-xl font-bold text-gray-800 dark:text-white mb-1">Progreso</h1>
+    <div className="h-full flex flex-col">
+      <div className="px-4 pt-6 pb-2 shrink-0 bg-gray-50 dark:bg-gray-950">
+        <h1 className="text-xl font-bold text-gray-800 dark:text-white mb-1">Progreso</h1>
 
-      {streak > 0 && (
-        <div className="mb-4">
-          <StreakBadge streak={streak} />
-        </div>
-      )}
+        {streak > 0 && (
+          <div className="mb-3">
+            <StreakBadge streak={streak} />
+          </div>
+        )}
 
-      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-3">
+        <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-3">
         {(['kcal', 'weight'] as const).map((t) => (
           <button
             key={t}
@@ -96,6 +97,9 @@ export default function ProgressPage() {
           </button>
         ))}
       </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 pb-24 overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
 
       {tab === 'kcal' && (
         <>
@@ -164,9 +168,10 @@ export default function ProgressPage() {
                   )}
                 </div>
               </div>
-            ))
+              ))
           )}
         </div>
+      </div>
       </div>
     </div>
   );

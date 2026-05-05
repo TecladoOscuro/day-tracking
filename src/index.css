@@ -19,11 +19,34 @@ body {
   padding-top: env(safe-area-inset-top, 0);
 }
 
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
 input, textarea, select {
   -webkit-user-select: text;
   user-select: text;
 }
 
-.safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0);
+.overscroll-contain {
+  overscroll-behavior-y: contain;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: slideUp 0.25s ease-out;
+}
+
+.h-dvh {
+  height: 100dvh;
 }

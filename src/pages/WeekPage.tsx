@@ -26,8 +26,8 @@ export default function WeekPage() {
   const baseDate = addWeeks(today, weekOffset);
   const days = getWeekDays(baseDate, settings.weekStartsOn);
   const weekLabel = getWeekLabel(days);
-
   const isCurrentWeek = weekOffset === 0;
+  const monthYear = days[3].toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
 
   const handleCellTap = (dateStr: string, period: Period) => {
     const meals = getMealsByDate(dateStr).filter((m) => m.period === period);
@@ -45,46 +45,50 @@ export default function WeekPage() {
     await addMeal({ date: selectedDate, ...data });
   };
 
-  const monthYear = days[3].toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-
   return (
-    <div className="px-4 pt-6 pb-24">
-      <div className="flex items-center justify-between mb-1">
-        <button
-          onClick={() => setWeekOffset((w) => w - 1)}
-          className="w-9 h-9 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-lg font-medium"
-        >
-          ‹
-        </button>
+    <div className="h-full flex flex-col">
+      <div className="px-4 pt-6 pb-2 shrink-0 bg-gray-50 dark:bg-gray-950">
+        <div className="flex items-center justify-between mb-1">
+          <button
+            onClick={() => setWeekOffset((w) => w - 1)}
+            className="w-9 h-9 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-lg font-medium active:scale-90 transition-transform"
+          >
+            ‹
+          </button>
 
-        <div className="text-center">
-          <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">
-            {monthYear}
-          </p>
-          <p className="text-sm font-bold text-gray-800 dark:text-white">
-            {weekLabel}
-          </p>
-          {isCurrentWeek && (
-            <span className="text-[10px] bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded-full font-medium">
-              Esta semana
-            </span>
-          )}
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+              {monthYear}
+            </p>
+            <p className="text-sm font-bold text-gray-800 dark:text-white">
+              {weekLabel}
+            </p>
+            {isCurrentWeek && (
+              <span className="text-[10px] bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded-full font-medium">
+                Esta semana
+              </span>
+            )}
+          </div>
+
+          <button
+            onClick={() => setWeekOffset((w) => w + 1)}
+            className="w-9 h-9 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-lg font-medium active:scale-90 transition-transform"
+          >
+            ›
+          </button>
         </div>
-
-        <button
-          onClick={() => setWeekOffset((w) => w + 1)}
-          className="w-9 h-9 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-lg font-medium"
-        >
-          ›
-        </button>
       </div>
 
-      <WeekGrid
-        days={days}
-        getMealsByDate={getMealsByDate}
-        goals={goals}
-        onCellTap={handleCellTap}
-      />
+      <div className="flex-1 overflow-y-auto px-4 pb-24 overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div className="pt-3">
+          <WeekGrid
+            days={days}
+            getMealsByDate={getMealsByDate}
+            goals={goals}
+            onCellTap={handleCellTap}
+          />
+        </div>
+      </div>
 
       {showForm && (
         <MealForm
@@ -112,7 +116,7 @@ export default function WeekPage() {
               ))}
               <button
                 onClick={() => { setShowDetail(false); setShowForm(true); }}
-                className="w-full py-2 mt-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700"
+                className="w-full py-2 mt-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 active:scale-[0.98] transition-all"
               >
                 + Añadir a este período
               </button>
