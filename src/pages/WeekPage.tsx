@@ -94,9 +94,9 @@ export default function WeekPage() {
       )}
 
       {showDetail && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[70vh] overflow-y-auto shadow-xl">
-            <div className="sticky top-0 bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-t-2xl px-5 pt-4 pb-2 border-b dark:border-gray-800 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md max-h-[70vh] overflow-y-auto shadow-xl">
+            <div className="sticky top-0 bg-white dark:bg-gray-900 rounded-t-2xl px-5 pt-4 pb-2 border-b dark:border-gray-800 flex items-center justify-between">
               <h3 className="font-bold text-lg dark:text-white">
                 {new Date(selectedDate + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric' })} · {selectedPeriod}
               </h3>

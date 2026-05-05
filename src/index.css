@@ -7,12 +7,8 @@
 }
 
 html, body {
-  overscroll-behavior: none;
+  overscroll-behavior-y: contain;
   touch-action: manipulation;
-}
-
-body {
-  padding-top: env(safe-area-inset-top, 0);
 }
 
 .safe-area-top {
@@ -26,10 +22,6 @@ body {
 input, textarea, select {
   -webkit-user-select: text;
   user-select: text;
-}
-
-.overscroll-contain {
-  overscroll-behavior-y: contain;
 }
 
 @keyframes slideUp {
