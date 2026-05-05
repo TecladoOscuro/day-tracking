@@ -41,14 +41,13 @@ export default function WeekPage() {
     }
   };
 
-  const handleSave = async (data: { period: Period; description: string; calories: number }) => {
-    await addMeal({ date: selectedDate, ...data });
+  const handleSave = async (data: { description: string; calories: number }) => {
+    await addMeal({ date: selectedDate, period: selectedPeriod, ...data });
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="px-4 pt-6 pb-2 shrink-0 bg-gray-50 dark:bg-gray-950">
-        <div className="flex items-center justify-between mb-1">
+    <div className="px-4 pt-6 pb-4">
+      <div className="flex items-center justify-between mb-1">
           <button
             onClick={() => setWeekOffset((w) => w - 1)}
             className="w-9 h-9 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-lg font-medium active:scale-90 transition-transform"
@@ -77,10 +76,8 @@ export default function WeekPage() {
             ›
           </button>
         </div>
-      </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-24 overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
-        <div className="pt-3">
+      <div className="pt-3">
           <WeekGrid
             days={days}
             getMealsByDate={getMealsByDate}
@@ -88,11 +85,9 @@ export default function WeekPage() {
             onCellTap={handleCellTap}
           />
         </div>
-      </div>
 
       {showForm && (
         <MealForm
-          initialPeriod={selectedPeriod}
           onSave={handleSave}
           onClose={() => setShowForm(false)}
         />
