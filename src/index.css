@@ -11,6 +11,14 @@ html, body {
   touch-action: manipulation;
 }
 
+body {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
 input, textarea, select {
   -webkit-user-select: text;
   user-select: text;
