@@ -25,6 +25,9 @@ export default function WeekPage() {
   const today = new Date();
   const baseDate = addWeeks(today, weekOffset);
   const days = getWeekDays(baseDate, settings.weekStartsOn);
+  const weekLabel = getWeekLabel(days);
+
+  const isCurrentWeek = weekOffset === 0;
 
   const handleCellTap = (dateStr: string, period: Period) => {
     const meals = getMealsByDate(dateStr).filter((m) => m.period === period);
@@ -42,29 +45,39 @@ export default function WeekPage() {
     await addMeal({ date: selectedDate, ...data });
   };
 
+  const monthYear = days[3].toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+
   return (
-    <div className="px-4 pt-6 pb-4">
-      <div className="flex items-center justify-between mb-3">
-        <h1 className="text-xl font-bold text-gray-800 dark:text-white">Semana</h1>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setWeekOffset((w) => w - 1)}
-            className="w-8 h-8 bg-white dark:bg-gray-800 rounded-full shadow-sm flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
-            ←
-          </button>
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400 min-w-[100px] text-center">
-            {weekOffset === 0 ? 'Esta semana' : `Semana ${weekOffset > 0 ? '+' : ''}${weekOffset}`}
-          </span>
-          <button
-            onClick={() => setWeekOffset((w) => w + 1)}
-            className="w-8 h-8 bg-white rounded-full shadow-sm flex items-center justify-center text-gray-500 hover:bg-gray-100"
-          >
-            →
-          </button>
+    <div className="px-4 pt-6 pb-24">
+      <div className="flex items-center justify-between mb-1">
+        <button
+          onClick={() => setWeekOffset((w) => w - 1)}
+          className="w-9 h-9 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-lg font-medium"
+        >
+          ‹
+        </button>
+
+        <div className="text-center">
+          <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+            {monthYear}
+          </p>
+          <p className="text-sm font-bold text-gray-800 dark:text-white">
+            {weekLabel}
+          </p>
+          {isCurrentWeek && (
+            <span className="text-[10px] bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded-full font-medium">
+              Esta semana
+            </span>
+          )}
         </div>
+
+        <button
+          onClick={() => setWeekOffset((w) => w + 1)}
+          className="w-9 h-9 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-lg font-medium"
+        >
+          ›
+        </button>
       </div>
-      <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{getWeekLabel(days)}</p>
 
       <WeekGrid
         days={days}
@@ -92,7 +105,7 @@ export default function WeekPage() {
             </div>
             <div className="p-5 space-y-2">
               {selectedMeals.map((meal) => (
-                <div key={meal.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                <div key={meal.id} className="flex items-center justify-between py-2 border-b border-gray-50 dark:border-gray-800 last:border-0">
                   <span className="text-sm text-gray-700 dark:text-gray-200">{meal.description}</span>
                   <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400">{meal.calories} kcal</span>
                 </div>

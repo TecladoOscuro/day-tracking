@@ -47,7 +47,7 @@ export default function TodayPage() {
   };
 
   return (
-    <div className="px-4 pt-6 pb-4">
+    <div className="px-4 pt-6 pb-24">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Hoy</h1>
@@ -86,7 +86,18 @@ export default function TodayPage() {
         </div>
       )}
 
-      <div className="space-y-3 mb-20">
+      <button
+        onClick={() => {
+          setEditingMeal(null);
+          setActivePeriod(getPeriodFromHour(new Date().getHours()) as Period);
+          setShowForm(true);
+        }}
+        className="w-full py-3 mb-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium text-sm shadow transition-colors"
+      >
+        + Añadir comida
+      </button>
+
+      <div className="space-y-3">
         {periods.map((period) => {
           const periodMeals = todayMeals.filter((m) => m.period === period);
           const periodTotal = periodMeals.reduce((s, m) => s + m.calories, 0);
@@ -97,7 +108,7 @@ export default function TodayPage() {
                 <h3 className="font-semibold text-gray-700 dark:text-gray-200">
                   {getPeriodLabel(period)}
                 </h3>
-                <span className="text-sm font-medium text-indigo-600">
+                <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
                   {periodTotal} kcal
                 </span>
               </div>
@@ -134,7 +145,7 @@ export default function TodayPage() {
                   setActivePeriod(period);
                   setShowForm(true);
                 }}
-                className="mt-2 text-xs text-indigo-500 font-medium hover:text-indigo-700"
+                className="mt-2 text-xs text-indigo-500 dark:text-indigo-400 font-medium hover:text-indigo-700 dark:hover:text-indigo-300"
               >
                 + Añadir
               </button>
@@ -142,18 +153,6 @@ export default function TodayPage() {
           );
         })}
       </div>
-
-      <button
-        onClick={() => {
-          setEditingMeal(null);
-          setActivePeriod(getPeriodFromHour(new Date().getHours()) as Period);
-          setShowForm(true);
-        }}
-        className="fixed right-4 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg text-2xl flex items-center justify-center hover:bg-indigo-700 active:scale-95 transition-transform z-30"
-        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 76px)' }}
-      >
-        +
-      </button>
 
       {showForm && (
         <MealForm
