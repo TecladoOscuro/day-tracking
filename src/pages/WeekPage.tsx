@@ -1,0 +1,112 @@
+import { useState } from 'react';
+import { useMeals } from '../hooks/useMeals';
+import { useGoals } from '../hooks/useGoals';
+import { useSettings } from '../hooks/useSettings';
+import WeekGrid from '../components/WeekGrid';
+import MealForm from '../components/MealForm';
+import {
+  getWeekDays,
+  getWeekLabel,
+  addWeeks,
+} from '../utils/dates';
+import type { Period, Meal } from '../types';
+
+export default function WeekPage() {
+  const { addMeal, getMealsByDate } = useMeals();
+  const { goals } = useGoals();
+  const { settings } = useSettings();
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [showForm, setShowForm] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('morning');
+  const [selectedMeals, setSelectedMeals] = useState<Meal[]>([]);
+
+  const today = new Date();
+  const baseDate = addWeeks(today, weekOffset);
+  const days = getWeekDays(baseDate, settings.weekStartsOn);
+
+  const handleCellTap = (dateStr: string, period: Period) => {
+    const meals = getMealsByDate(dateStr).filter((m) => m.period === period);
+    setSelectedDate(dateStr);
+    setSelectedPeriod(period);
+    if (meals.length > 0) {
+      setSelectedMeals(meals);
+      setShowDetail(true);
+    } else {
+      setShowForm(true);
+    }
+  };
+
+  const handleSave = async (data: { period: Period; description: string; calories: number }) => {
+    await addMeal({ date: selectedDate, ...data });
+  };
+
+  return (
+    <div className="px-4 pt-6 pb-4">
+      <div className="flex items-center justify-between mb-3">
+        <h1 className="text-xl font-bold text-gray-800">Semana</h1>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setWeekOffset((w) => w - 1)}
+            className="w-8 h-8 bg-white rounded-full shadow-sm flex items-center justify-center text-gray-500 hover:bg-gray-100"
+          >
+            ←
+          </button>
+          <span className="text-xs font-medium text-gray-500 min-w-[100px] text-center">
+            {weekOffset === 0 ? 'Esta semana' : `Semana ${weekOffset > 0 ? '+' : ''}${weekOffset}`}
+          </span>
+          <button
+            onClick={() => setWeekOffset((w) => w + 1)}
+            className="w-8 h-8 bg-white rounded-full shadow-sm flex items-center justify-center text-gray-500 hover:bg-gray-100"
+          >
+            →
+          </button>
+        </div>
+      </div>
+      <p className="text-xs text-gray-400 mb-3">{getWeekLabel(days)}</p>
+
+      <WeekGrid
+        days={days}
+        getMealsByDate={getMealsByDate}
+        goals={goals}
+        onCellTap={handleCellTap}
+      />
+
+      {showForm && (
+        <MealForm
+          initialPeriod={selectedPeriod}
+          onSave={handleSave}
+          onClose={() => setShowForm(false)}
+        />
+      )}
+
+      {showDetail && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[70vh] overflow-y-auto shadow-xl">
+            <div className="sticky top-0 bg-white rounded-t-2xl px-5 pt-4 pb-2 border-b flex items-center justify-between">
+              <h3 className="font-bold text-lg">
+                {new Date(selectedDate + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric' })} · {selectedPeriod}
+              </h3>
+              <button onClick={() => setShowDetail(false)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
+            </div>
+            <div className="p-5 space-y-2">
+              {selectedMeals.map((meal) => (
+                <div key={meal.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                  <span className="text-sm text-gray-700">{meal.description}</span>
+                  <span className="text-sm font-medium text-indigo-600">{meal.calories} kcal</span>
+                </div>
+              ))}
+              <button
+                onClick={() => { setShowDetail(false); setShowForm(true); }}
+                className="w-full py-2 mt-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700"
+              >
+                + Añadir a este período
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
