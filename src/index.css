@@ -46,7 +46,3 @@ input, textarea, select {
 .animate-in {
   animation: slideUp 0.25s ease-out;
 }
-
-.h-dvh {
-  height: 100dvh;
-}
