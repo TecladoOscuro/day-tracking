@@ -4,6 +4,7 @@ import type { Settings } from '../types';
 
 const DEFAULT_SETTINGS: Settings = {
   weekStartsOn: 'monday',
+  darkMode: true,
 };
 
 export function useSettings() {

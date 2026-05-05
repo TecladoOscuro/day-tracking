@@ -7,9 +7,11 @@ import ProgressPage from './pages/ProgressPage';
 import MorePage from './pages/MorePage';
 import OnboardingWizard from './components/OnboardingWizard';
 import { useProfile } from './hooks/useProfile';
+import { useTheme } from './hooks/useTheme';
 
 function AppContent() {
   const { hasProfile, loading, saveProfile } = useProfile();
+  useTheme();
 
   if (loading) {
     return (

@@ -1,6 +1,6 @@
 import type { Meal, Period } from '../types';
-import { formatDateShort, formatDate, getPeriodLabel, isToday } from '../utils/dates';
-import DayCell from './DayCell';
+import { formatDate, formatDateShort, getPeriodLabel, isToday } from '../utils/dates';
+import { getPct } from './DayCell';
 
 interface Props {
   days: Date[];
@@ -10,6 +10,14 @@ interface Props {
 }
 
 const PERIODS: Period[] = ['morning', 'midday', 'afternoon', 'night'];
+
+function cellTextColor(calories: number, target: number, orangePct: number): string {
+  if (calories === 0) return 'text-gray-400 dark:text-gray-600';
+  const pct = getPct(calories, target);
+  if (pct <= 100) return 'text-emerald-700 dark:text-emerald-300';
+  if (pct <= orangePct) return 'text-amber-700 dark:text-amber-300';
+  return 'text-red-700 dark:text-red-300';
+}
 
 export default function WeekGrid({ days, getMealsByDate, goals, onCellTap }: Props) {
   const getCellTotal = (date: string, period: string) =>
@@ -21,69 +29,78 @@ export default function WeekGrid({ days, getMealsByDate, goals, onCellTap }: Pro
     getMealsByDate(date).reduce((sum, m) => sum + m.calories, 0);
 
   return (
-    <div className="overflow-x-auto -mx-4 px-4">
-      <table className="w-full min-w-[600px] border-separate border-spacing-1">
-        <thead>
-          <tr>
-            <th className="text-left text-xs font-medium text-gray-400 py-1 pl-1">
-              Momento
-            </th>
-            {days.map((day, i) => (
-              <th
-                key={i}
-                className={`text-center text-xs font-medium py-1 ${isToday(day) ? 'bg-indigo-100 text-indigo-700 rounded-lg' : 'text-gray-400'}`}
+    <div className="space-y-3">
+      {days.map((day) => {
+        const isoDate = formatDate(day);
+        const dayTotal = getDayTotal(isoDate);
+        const today = isToday(day);
+
+        return (
+          <div
+            key={isoDate}
+            className={`rounded-2xl border transition-colors ${
+              today
+                ? 'border-indigo-300 dark:border-indigo-700 bg-indigo-50/50 dark:bg-indigo-950/30'
+                : 'border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900'
+            }`}
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-inherit">
+              <div>
+                <span
+                  className={`text-sm font-semibold ${
+                    today
+                      ? 'text-indigo-700 dark:text-indigo-300'
+                      : 'text-gray-700 dark:text-gray-200'
+                  }`}
+                >
+                  {formatDateShort(day)}
+                </span>
+                {today && (
+                  <span className="ml-2 text-[10px] bg-indigo-100 dark:bg-indigo-800 text-indigo-600 dark:text-indigo-300 px-1.5 py-0.5 rounded-full font-medium">
+                    Hoy
+                  </span>
+                )}
+              </div>
+              <div
+                className={`text-sm font-bold px-2.5 py-1 rounded-full ${
+                  dayTotal === 0
+                    ? 'text-gray-400 dark:text-gray-600 bg-gray-100 dark:bg-gray-800'
+                    : getPct(dayTotal, goals.kcalTarget) <= 100
+                    ? 'text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/50'
+                    : getPct(dayTotal, goals.kcalTarget) <= goals.orangePct
+                    ? 'text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/50'
+                    : 'text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-900/50'
+                }`}
               >
-                {formatDateShort(day)}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {PERIODS.map((period) => (
-            <tr key={period}>
-              <td className="text-xs text-gray-500 font-medium py-1 pr-2">
-                {getPeriodLabel(period)}
-              </td>
-              {days.map((day, i) => {
-                const isoDate = formatDate(day);
+                {dayTotal > 0 ? `${dayTotal}` : '-'}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 divide-x divide-inherit">
+              {PERIODS.map((period) => {
                 const total = getCellTotal(isoDate, period);
+                const pt = goals.kcalTarget / 4;
                 return (
-                  <td
-                    key={i}
+                  <button
+                    key={period}
                     onClick={() => onCellTap(isoDate, period)}
-                    className="cursor-pointer"
+                    className="py-2.5 text-center active:opacity-70 transition-opacity"
                   >
-                    <DayCell
-                      calories={total}
-                      target={goals.kcalTarget / 4}
-                      orangePct={goals.orangePct}
-                      redPct={goals.redPct}
-                    />
-                  </td>
+                    <div className="text-[10px] font-medium text-gray-400 dark:text-gray-500 mb-0.5">
+                      {getPeriodLabel(period).slice(0, 3)}
+                    </div>
+                    <div
+                      className={`text-sm font-semibold ${cellTextColor(total, pt, goals.orangePct)}`}
+                    >
+                      {total > 0 ? total : '-'}
+                    </div>
+                  </button>
                 );
               })}
-            </tr>
-          ))}
-          <tr>
-            <td className="text-xs text-gray-800 font-bold py-1 pr-2">
-              Total día
-            </td>
-            {days.map((day, i) => {
-              const isoDate = formatDate(day);
-              return (
-                <td key={i}>
-                  <DayCell
-                    calories={getDayTotal(isoDate)}
-                    target={goals.kcalTarget}
-                    orangePct={goals.orangePct}
-                    redPct={goals.redPct}
-                  />
-                </td>
-              );
-            })}
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

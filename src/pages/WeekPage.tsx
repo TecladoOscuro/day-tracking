@@ -45,15 +45,15 @@ export default function WeekPage() {
   return (
     <div className="px-4 pt-6 pb-4">
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-xl font-bold text-gray-800">Semana</h1>
+        <h1 className="text-xl font-bold text-gray-800 dark:text-white">Semana</h1>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setWeekOffset((w) => w - 1)}
-            className="w-8 h-8 bg-white rounded-full shadow-sm flex items-center justify-center text-gray-500 hover:bg-gray-100"
+            className="w-8 h-8 bg-white dark:bg-gray-800 rounded-full shadow-sm flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             ←
           </button>
-          <span className="text-xs font-medium text-gray-500 min-w-[100px] text-center">
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400 min-w-[100px] text-center">
             {weekOffset === 0 ? 'Esta semana' : `Semana ${weekOffset > 0 ? '+' : ''}${weekOffset}`}
           </span>
           <button
@@ -64,7 +64,7 @@ export default function WeekPage() {
           </button>
         </div>
       </div>
-      <p className="text-xs text-gray-400 mb-3">{getWeekLabel(days)}</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{getWeekLabel(days)}</p>
 
       <WeekGrid
         days={days}
@@ -83,18 +83,18 @@ export default function WeekPage() {
 
       {showDetail && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[70vh] overflow-y-auto shadow-xl">
-            <div className="sticky top-0 bg-white rounded-t-2xl px-5 pt-4 pb-2 border-b flex items-center justify-between">
-              <h3 className="font-bold text-lg">
+          <div className="bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[70vh] overflow-y-auto shadow-xl">
+            <div className="sticky top-0 bg-white dark:bg-gray-900 rounded-t-2xl px-5 pt-4 pb-2 border-b dark:border-gray-800 flex items-center justify-between">
+              <h3 className="font-bold text-lg dark:text-white">
                 {new Date(selectedDate + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric' })} · {selectedPeriod}
               </h3>
-              <button onClick={() => setShowDetail(false)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
+              <button onClick={() => setShowDetail(false)} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-2xl leading-none">×</button>
             </div>
             <div className="p-5 space-y-2">
               {selectedMeals.map((meal) => (
                 <div key={meal.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                  <span className="text-sm text-gray-700">{meal.description}</span>
-                  <span className="text-sm font-medium text-indigo-600">{meal.calories} kcal</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{meal.description}</span>
+                  <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400">{meal.calories} kcal</span>
                 </div>
               ))}
               <button

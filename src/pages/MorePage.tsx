@@ -67,7 +67,7 @@ export default function MorePage() {
 
   return (
     <div className="px-4 pt-6 pb-4">
-      <h1 className="text-xl font-bold text-gray-800 mb-4">Más</h1>
+      <h1 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Más</h1>
 
       <div className="flex gap-1 flex-wrap mb-4">
         {tabs.map((t) => (
@@ -76,8 +76,8 @@ export default function MorePage() {
             onClick={() => setSection(t.key)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               section === t.key
-                ? 'bg-indigo-100 text-indigo-700'
-                : 'bg-white text-gray-600 hover:bg-gray-100 shadow-sm'
+                ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300'
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm'
             }`}
           >
             {t.icon} {t.label}
@@ -86,10 +86,10 @@ export default function MorePage() {
       </div>
 
       {section === 'goals' && (
-        <div className="bg-white rounded-2xl p-4 shadow-sm space-y-4">
-          <h2 className="font-semibold text-gray-700">Objetivos</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-4">
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200">Objetivos</h2>
           <div>
-            <label className="block text-sm text-gray-500 mb-1">
+            <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">
               Objetivo diario (kcal)
             </label>
             <input
@@ -99,11 +99,11 @@ export default function MorePage() {
                 setLocalGoals({ ...localGoals, kcalTarget: Number(e.target.value) || 0 })
               }
               onBlur={() => saveGoals(localGoals)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-500 mb-1">
+            <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">
               Objetivo de peso (kg)
             </label>
             <input
@@ -116,12 +116,12 @@ export default function MorePage() {
                 })
               }
               onBlur={() => saveGoals(localGoals)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm text-gray-500 mb-1">
+              <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">
                 Umbral 🟠 (%)
               </label>
               <input
@@ -134,11 +134,11 @@ export default function MorePage() {
                   })
                 }
                 onBlur={() => saveGoals(localGoals)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-500 mb-1">
+              <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">
                 Umbral 🔴 (%)
               </label>
               <input
@@ -148,12 +148,12 @@ export default function MorePage() {
                   setLocalGoals({ ...localGoals, redPct: Number(e.target.value) || 100 })
                 }
                 onBlur={() => saveGoals(localGoals)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm text-gray-500 mb-1">
+            <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">
               Primer día de la semana
             </label>
             <select
@@ -163,43 +163,62 @@ export default function MorePage() {
                 setLocalSettings(next);
                 saveSettings(next);
               }}
-              className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
             >
               <option value="monday">Lunes</option>
               <option value="sunday">Domingo</option>
             </select>
           </div>
+          <div>
+            <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">
+              Modo oscuro
+            </label>
+            <button
+              onClick={() => {
+                const next = { ...localSettings, darkMode: !localSettings.darkMode };
+                setLocalSettings(next);
+                saveSettings(next);
+              }}
+              className={`w-full py-2.5 rounded-xl text-sm font-medium transition ${
+                localSettings.darkMode
+                  ? 'bg-gray-800 text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+              }`}
+            >
+              {localSettings.darkMode ? '🌙 Oscuro' : '☀️ Claro'}
+            </button>
+          </div>
         </div>
       )}
 
       {section === 'profile' && (
-        <div className="bg-white rounded-2xl p-4 shadow-sm space-y-4">
-          <h2 className="font-semibold text-gray-700">Perfil fisiológico</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-4">
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200">Perfil fisiológico</h2>
           {hasProfile && profile ? (
             <>
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400">Altura</p>
-                  <p className="font-semibold">{profile.height} cm</p>
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 dark:text-gray-500">Altura</p>
+                  <p className="font-semibold dark:text-white">{profile.height} cm</p>
                 </div>
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400">Peso</p>
-                  <p className="font-semibold">{profile.currentWeight} kg</p>
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 dark:text-gray-500">Peso</p>
+                  <p className="font-semibold dark:text-white">{profile.currentWeight} kg</p>
                 </div>
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400">Edad</p>
-                  <p className="font-semibold">{profile.age} años</p>
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 dark:text-gray-500">Edad</p>
+                  <p className="font-semibold dark:text-white">{profile.age} años</p>
                 </div>
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400">Sexo</p>
-                  <p className="font-semibold">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 dark:text-gray-500">Sexo</p>
+                  <p className="font-semibold dark:text-white">
                     {profile.sex === 'male' ? 'Hombre' : 'Mujer'}
                   </p>
                 </div>
               </div>
-              <div className="bg-gray-50 rounded-xl p-3">
-                <p className="text-xs text-gray-400">Actividad</p>
-                <p className="font-semibold text-sm">
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                <p className="text-xs text-gray-400 dark:text-gray-500">Actividad</p>
+                <p className="font-semibold dark:text-white text-sm">
                   {ACTIVITY_LABELS[profile.activityLevel]}
                 </p>
               </div>
@@ -211,7 +230,7 @@ export default function MorePage() {
               </button>
             </>
           ) : (
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-400 dark:text-gray-500">
               Completa el perfil en el onboarding para ver tus métricas.
             </p>
           )}

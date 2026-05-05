@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useMeals } from '../hooks/useMeals';
 import { useGoals } from '../hooks/useGoals';
-import { useFoodPresets } from '../hooks/useFoodPresets';
 import CalorieIndicator from '../components/CalorieIndicator';
 import MealForm from '../components/MealForm';
 import { getTodayStr, getPeriodLabel, getPeriodFromHour } from '../utils/dates';
@@ -11,7 +10,6 @@ export default function TodayPage() {
   const { addMeal, updateMeal, deleteMeal, getMealsByDate, getTotalByDate } =
     useMeals();
   const { goals } = useGoals();
-  const { presets, addPreset } = useFoodPresets();
   const [showForm, setShowForm] = useState(false);
   const [activePeriod, setActivePeriod] = useState<Period>('morning');
   const [editingMeal, setEditingMeal] = useState<{
@@ -33,12 +31,6 @@ export default function TodayPage() {
       setEditingMeal(null);
     } else {
       await addMeal({ date: today, ...data });
-      const exists = presets.find(
-        (p) => p.name.toLowerCase() === data.description.toLowerCase()
-      );
-      if (!exists) {
-        await addPreset({ name: data.description, calories: data.calories });
-      }
     }
   };
 
@@ -58,8 +50,8 @@ export default function TodayPage() {
     <div className="px-4 pt-6 pb-4">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Hoy</h1>
-          <p className="text-sm text-gray-400">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Hoy</h1>
+          <p className="text-sm text-gray-400 dark:text-gray-500">
             {new Date().toLocaleDateString('es-ES', {
               weekday: 'long',
               day: 'numeric',
@@ -77,7 +69,7 @@ export default function TodayPage() {
       </div>
 
       {goals.kcalTarget > 0 && (
-        <div className="bg-white rounded-xl p-3 mb-4 shadow-sm text-sm text-gray-500">
+        <div className="bg-white dark:bg-gray-900 rounded-xl p-3 mb-4 shadow-sm text-sm text-gray-500 dark:text-gray-400">
           {total <= goals.kcalTarget ? (
             <span className="text-emerald-600 font-medium">
               ✅ Te quedan {goals.kcalTarget - total} kcal para el objetivo
@@ -100,17 +92,17 @@ export default function TodayPage() {
           const periodTotal = periodMeals.reduce((s, m) => s + m.calories, 0);
 
           return (
-            <div key={period} className="bg-white rounded-2xl p-4 shadow-sm">
+            <div key={period} className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-gray-700">
+                <h3 className="font-semibold text-gray-700 dark:text-gray-200">
                   {getPeriodLabel(period)}
                 </h3>
                 <span className="text-sm font-medium text-indigo-600">
                   {periodTotal} kcal
                 </span>
               </div>
-              {periodMeals.length === 0 ? (
-                <p className="text-xs text-gray-300 py-2">Sin comidas registradas</p>
+                {periodMeals.length === 0 ? (
+                <p className="text-xs text-gray-300 dark:text-gray-700 py-2">Sin comidas registradas</p>
               ) : (
                 periodMeals.map((meal) => (
                   <div
@@ -123,14 +115,14 @@ export default function TodayPage() {
                         calories: meal.calories,
                       })
                     }
-                    className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50 -mx-2 px-2 rounded-lg"
+                    className="flex items-center justify-between py-2 border-b border-gray-50 dark:border-gray-800 last:border-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 -mx-2 px-2 rounded-lg"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-700 truncate">
+                      <p className="text-sm text-gray-700 dark:text-gray-200 truncate">
                         {meal.description}
                       </p>
                     </div>
-                    <span className="text-sm font-medium text-gray-900 ml-2 shrink-0">
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100 ml-2 shrink-0">
                       {meal.calories} kcal
                     </span>
                   </div>
@@ -157,7 +149,8 @@ export default function TodayPage() {
           setActivePeriod(getPeriodFromHour(new Date().getHours()) as Period);
           setShowForm(true);
         }}
-        className="fixed bottom-20 right-4 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg text-2xl flex items-center justify-center hover:bg-indigo-700 active:scale-95 transition-transform z-30"
+        className="fixed right-4 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg text-2xl flex items-center justify-center hover:bg-indigo-700 active:scale-95 transition-transform z-30"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 76px)' }}
       >
         +
       </button>

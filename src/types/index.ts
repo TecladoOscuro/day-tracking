@@ -44,6 +44,7 @@ export interface Goals {
 
 export interface Settings {
   weekStartsOn: WeekStart;
+  darkMode: boolean;
 }
 
 export interface FoodPreset {

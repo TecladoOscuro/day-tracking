@@ -18,7 +18,7 @@ export default function TabBar() {
       : location.pathname.startsWith(path);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 safe-area-bottom z-40">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 safe-area-bottom z-40">
       <div className="flex items-center justify-around max-w-lg mx-auto">
         {TABS.map((tab) => (
           <button
@@ -28,8 +28,8 @@ export default function TabBar() {
             aria-current={isActive(tab.path) ? 'page' : undefined}
             className={`flex flex-col items-center py-2 px-3 min-w-[60px] transition-colors ${
               isActive(tab.path)
-                ? 'text-indigo-600'
-                : 'text-gray-400 hover:text-gray-600'
+                ? 'text-indigo-600 dark:text-indigo-400'
+                : 'text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400'
             }`}
           >
             <span className="text-xl">{tab.icon}</span>

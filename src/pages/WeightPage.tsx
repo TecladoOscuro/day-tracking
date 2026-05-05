@@ -33,7 +33,7 @@ export default function WeightPage() {
   return (
     <div className="px-4 pt-6 pb-4">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-gray-800">Peso</h1>
+        <h1 className="text-xl font-bold text-gray-800 dark:text-white">Peso</h1>
         <button
           onClick={() => setShowForm(true)}
           className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 shadow"
@@ -66,7 +66,7 @@ export default function WeightPage() {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl p-8 text-center text-gray-400 mb-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 text-center text-gray-400 dark:text-gray-500 mb-4 shadow-sm">
           <p className="text-3xl mb-2">⚖️</p>
           <p className="text-sm">No hay registros de peso aún. Empieza registrando tu primer peso.</p>
         </div>
@@ -74,13 +74,13 @@ export default function WeightPage() {
 
       {weights.length > 1 && (
         <>
-          <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-3">
+          <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-3">
             {(['chart', 'photos', 'compare'] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
                 className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition ${
-                  tab === t ? 'bg-white shadow text-gray-800' : 'text-gray-500'
+                  tab === t ? 'bg-white dark:bg-gray-700 shadow text-gray-800 dark:text-white' : 'text-gray-500 dark:text-gray-400'
                 }`}
               >
                 {t === 'chart' ? '📈 Gráfica' : t === 'photos' ? '🖼️ Fotos' : '🔍 Comparar'}
@@ -97,9 +97,9 @@ export default function WeightPage() {
       )}
 
       <div className="mt-4 space-y-2 mb-16">
-        <h3 className="text-sm font-semibold text-gray-600">Historial</h3>
+        <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">Historial</h3>
         {weights.length === 0 ? (
-          <p className="text-xs text-gray-400">Sin registros</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500">Sin registros</p>
         ) : (
           weights
             .slice()
@@ -107,7 +107,7 @@ export default function WeightPage() {
             .map((w) => (
               <div
                 key={w.id}
-                className="bg-white rounded-xl p-3 shadow-sm flex items-center gap-3"
+                className="bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm flex items-center gap-3"
               >
                 {w.photo && (
                   <img
@@ -117,7 +117,7 @@ export default function WeightPage() {
                   />
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-700">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
                     {new Date(w.date).toLocaleDateString('es-ES', {
                       weekday: 'short',
                       day: 'numeric',
@@ -125,10 +125,10 @@ export default function WeightPage() {
                     })}
                   </p>
                   {w.note && (
-                    <p className="text-xs text-gray-400 truncate">{w.note}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 truncate">{w.note}</p>
                   )}
                 </div>
-                <span className="font-bold text-gray-800">{w.weight} kg</span>
+                <span className="font-bold text-gray-800 dark:text-white">{w.weight} kg</span>
                 <button
                   onClick={() => {
                     if (window.confirm('¿Eliminar este registro de peso?')) {

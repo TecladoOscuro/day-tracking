@@ -75,7 +75,7 @@ export default function ProgressPage() {
 
   return (
     <div className="px-4 pt-6 pb-4">
-      <h1 className="text-xl font-bold text-gray-800 mb-1">Progreso</h1>
+      <h1 className="text-xl font-bold text-gray-800 dark:text-white mb-1">Progreso</h1>
 
       {streak > 0 && (
         <div className="mb-4">
@@ -83,13 +83,13 @@ export default function ProgressPage() {
         </div>
       )}
 
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-3">
+      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-3">
         {(['kcal', 'weight'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition ${
-              tab === t ? 'bg-white shadow text-gray-800' : 'text-gray-500'
+              tab === t ? 'bg-white dark:bg-gray-700 shadow text-gray-800 dark:text-white' : 'text-gray-500 dark:text-gray-400'
             }`}
           >
             {t === 'kcal' ? '🍽️ Calorías' : '⚖️ Peso'}
@@ -106,8 +106,8 @@ export default function ProgressPage() {
                 onClick={() => setRange(r)}
                 className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
                   range === r
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-500 hover:bg-gray-100'
+                    ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300'
+                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
               >
                 {r} días
@@ -128,33 +128,33 @@ export default function ProgressPage() {
 
       <div className="mt-4 mb-20">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold text-gray-600">Resumen mensual</h3>
+          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">Resumen mensual</h3>
           <button
             onClick={handleExport}
-            className="text-xs text-indigo-600 font-medium hover:underline"
+            className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline"
           >
             📤 Exportar
           </button>
         </div>
         <div className="space-y-2">
           {monthlySummary.length === 0 ? (
-            <p className="text-xs text-gray-400">Sin datos aún</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">Sin datos aún</p>
           ) : (
             monthlySummary.map((m) => (
               <div
                 key={m.month}
-                className="bg-white rounded-xl p-3 shadow-sm flex items-center justify-between"
+                className="bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm flex items-center justify-between"
               >
                 <div>
-                  <p className="text-sm font-medium text-gray-700">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
                     {formatMonthYear(new Date(m.month + '-01'))}
                   </p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
                     {m.days} días · Media {m.days > 0 ? Math.round(m.total / m.days) : 0} kcal/día
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-bold text-gray-800">
+                  <span className="text-sm font-bold text-gray-800 dark:text-white">
                     {m.total} kcal
                   </span>
                   {m.days > 0 && (
