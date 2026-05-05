@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es" class="dark">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/day-tracking/favicon.svg" />
@@ -11,8 +11,16 @@
     <link rel="apple-touch-icon" href="/day-tracking/apple-touch-icon.png" />
     <meta name="description" content="Registro diario de calorías y seguimiento de peso" />
     <title>Day Tracking</title>
+    <script>
+      (function() {
+        var theme = localStorage.getItem('daytracking-theme') || 'dark';
+        if (theme === 'dark') document.documentElement.classList.add('dark');
+        var color = theme === 'dark' ? '#111827' : '#f9fafb';
+        document.querySelector('meta[name="theme-color"]').content = color;
+      })();
+    </script>
   </head>
-  <body class="bg-gray-900 text-white">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

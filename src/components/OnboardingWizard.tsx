@@ -29,13 +29,13 @@ export default function OnboardingWizard({ onComplete }: Props) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-500 to-indigo-700 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-md p-6">
         <div className="flex gap-1 mb-6">
           {[1, 2, 3].map((s) => (
             <div
               key={s}
               className={`h-1.5 flex-1 rounded-full transition-colors ${
-                s <= step ? 'bg-indigo-500' : 'bg-gray-200'
+                s <= step ? 'bg-indigo-500' : 'bg-gray-200 dark:bg-gray-700'
               }`}
             />
           ))}
@@ -43,14 +43,14 @@ export default function OnboardingWizard({ onComplete }: Props) {
 
         {step === 1 && (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-gray-800">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white">
               Cuéntame sobre ti
             </h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Estos datos se usan para calcular tu metabolismo y darte recomendaciones personalizadas. Todo se guarda solo en tu dispositivo.
             </p>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 Sexo
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -62,7 +62,7 @@ export default function OnboardingWizard({ onComplete }: Props) {
                     className={`py-2.5 rounded-xl text-sm font-medium transition ${
                       sex === s
                         ? 'bg-indigo-600 text-white shadow'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                     }`}
                   >
                     {s === 'male' ? '♂ Hombre' : '♀ Mujer'}
@@ -71,7 +71,7 @@ export default function OnboardingWizard({ onComplete }: Props) {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 Altura: {height} cm
               </label>
               <input
@@ -82,13 +82,13 @@ export default function OnboardingWizard({ onComplete }: Props) {
                 onChange={(e) => setHeight(Number(e.target.value))}
                 className="w-full accent-indigo-500"
               />
-              <div className="flex justify-between text-[10px] text-gray-400">
+              <div className="flex justify-between text-[10px] text-gray-400 dark:text-gray-500">
                 <span>130cm</span>
                 <span>220cm</span>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 Peso actual: {weight} kg
               </label>
               <input
@@ -99,13 +99,13 @@ export default function OnboardingWizard({ onComplete }: Props) {
                 onChange={(e) => setWeight(Number(e.target.value))}
                 className="w-full accent-indigo-500"
               />
-              <div className="flex justify-between text-[10px] text-gray-400">
+              <div className="flex justify-between text-[10px] text-gray-400 dark:text-gray-500">
                 <span>35kg</span>
                 <span>200kg</span>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 Edad: {age} años
               </label>
               <input
@@ -116,7 +116,7 @@ export default function OnboardingWizard({ onComplete }: Props) {
                 onChange={(e) => setAge(Number(e.target.value))}
                 className="w-full accent-indigo-500"
               />
-              <div className="flex justify-between text-[10px] text-gray-400">
+              <div className="flex justify-between text-[10px] text-gray-400 dark:text-gray-500">
                 <span>14</span>
                 <span>100</span>
               </div>
@@ -132,10 +132,10 @@ export default function OnboardingWizard({ onComplete }: Props) {
 
         {step === 2 && (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-gray-800">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white">
               Nivel de actividad
             </h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Esto determina cuántas calorías gastas al día.
             </p>
             {Object.entries(ACTIVITY_LABELS).map(([key, label]) => (
@@ -155,7 +155,7 @@ export default function OnboardingWizard({ onComplete }: Props) {
             <div className="flex gap-2">
               <button
                 onClick={() => setStep(1)}
-                className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200"
+                className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700"
               >
                 Atrás
               </button>
@@ -171,45 +171,45 @@ export default function OnboardingWizard({ onComplete }: Props) {
 
         {step === 3 && (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-gray-800">Tus resultados</h2>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white">Tus resultados</h2>
 
-            <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-4 space-y-3">
+            <div className="bg-gradient-to-br from-indigo-50 dark:from-indigo-950 to-indigo-100 dark:to-indigo-900 rounded-2xl p-4 space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Metabolismo basal (BMR)</span>
+                <span className="text-gray-600 dark:text-gray-400">Metabolismo basal (BMR)</span>
                 <span className="font-bold text-indigo-700">{results.bmr} kcal</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Gasto diario (TDEE)</span>
+                <span className="text-gray-600 dark:text-gray-400">Gasto diario (TDEE)</span>
                 <span className="font-bold text-indigo-700">{results.tdee} kcal</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">IMC</span>
+                <span className="text-gray-600 dark:text-gray-400">IMC</span>
                 <span className="font-bold">{results.imc} — {results.imcLabel}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Peso ideal</span>
+                <span className="text-gray-600 dark:text-gray-400">Peso ideal</span>
                 <span className="font-bold">
                   {results.idealMinWeight} – {results.idealMaxWeight} kg
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Déficit moderado</span>
+                <span className="text-gray-600 dark:text-gray-400">Déficit moderado</span>
                 <span className="font-bold text-emerald-600">
                   {results.deficitModerate} kcal/día
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Déficit agresivo</span>
+                <span className="text-gray-600 dark:text-gray-400">Déficit agresivo</span>
                 <span className="font-bold text-amber-600">
                   {results.deficitAggressive} kcal/día
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Mínimo seguro (80% BMR)</span>
+                <span className="text-gray-600 dark:text-gray-400">Mínimo seguro (80% BMR)</span>
                 <span className="font-bold text-red-500">{results.minSafe} kcal</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Pérdida estimada/semana</span>
+                <span className="text-gray-600 dark:text-gray-400">Pérdida estimada/semana</span>
                 <span className="font-bold text-emerald-600">
                   ~{results.estimatedLoss.toFixed(2)} kg
                 </span>
@@ -223,7 +223,7 @@ export default function OnboardingWizard({ onComplete }: Props) {
             <div className="flex gap-2">
               <button
                 onClick={() => setStep(2)}
-                className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200"
+                className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700"
               >
                 Atrás
               </button>

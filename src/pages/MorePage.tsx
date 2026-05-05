@@ -3,6 +3,7 @@ import { useGoals } from '../hooks/useGoals';
 import { useProfile } from '../hooks/useProfile';
 import { useSettings } from '../hooks/useSettings';
 import { useFoodPresets } from '../hooks/useFoodPresets';
+import { useTheme } from '../hooks/useTheme';
 import { exportAllData, downloadJSON, importData } from '../utils/exportImport';
 import { getFullResults, ACTIVITY_LABELS } from '../utils/endocrine';
 import type { WeekStart } from '../types';
@@ -13,6 +14,7 @@ export default function MorePage() {
   const { profile, hasProfile } = useProfile();
   const { settings, saveSettings } = useSettings();
   const { presets, deletePreset } = useFoodPresets();
+  const { theme, toggle: toggleTheme } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [localGoals, setLocalGoals] = useState<Goals>(goals);
@@ -171,21 +173,17 @@ export default function MorePage() {
           </div>
           <div>
             <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">
-              Modo oscuro
+              Tema
             </label>
             <button
-              onClick={() => {
-                const next = { ...localSettings, darkMode: !localSettings.darkMode };
-                setLocalSettings(next);
-                saveSettings(next);
-              }}
+              onClick={toggleTheme}
               className={`w-full py-2.5 rounded-xl text-sm font-medium transition ${
-                localSettings.darkMode
+                theme === 'dark'
                   ? 'bg-gray-800 text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  : 'bg-gray-100 text-gray-700'
               }`}
             >
-              {localSettings.darkMode ? '🌙 Oscuro' : '☀️ Claro'}
+              {theme === 'dark' ? '🌙 Oscuro' : '☀️ Claro'}
             </button>
           </div>
         </div>
@@ -238,45 +236,45 @@ export default function MorePage() {
       )}
 
       {section === 'advice' && results ? (
-        <div className="space-y-4 mb-20">
-          <div className="bg-white rounded-2xl p-4 shadow-sm space-y-3">
-            <h2 className="font-semibold text-gray-700">Tus métricas</h2>
+        <div className="space-y-4">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3">
+            <h2 className="font-semibold text-gray-700 dark:text-gray-200">Tus métricas</h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">BMR</span>
-                <span className="font-semibold">{results.bmr} kcal</span>
+                <span className="text-gray-500 dark:text-gray-400">BMR</span>
+                <span className="font-semibold dark:text-white">{results.bmr} kcal</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">TDEE</span>
-                <span className="font-semibold">{results.tdee} kcal</span>
+                <span className="text-gray-500 dark:text-gray-400">TDEE</span>
+                <span className="font-semibold dark:text-white">{results.tdee} kcal</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">IMC</span>
-                <span className="font-semibold">
+                <span className="text-gray-500 dark:text-gray-400">IMC</span>
+                <span className="font-semibold dark:text-white">
                   {results.imc} — {results.imcLabel}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Peso ideal</span>
-                <span className="font-semibold">
+                <span className="text-gray-500 dark:text-gray-400">Peso ideal</span>
+                <span className="font-semibold dark:text-white">
                   {results.idealMinWeight} – {results.idealMaxWeight} kg
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Déficit moderado (recomendado)</span>
-                <span className="font-semibold text-emerald-600">
+                <span className="text-gray-500 dark:text-gray-400">Déficit moderado (recomendado)</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400">
                   {results.deficitModerate} kcal/día
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Déficit agresivo</span>
-                <span className="font-semibold text-amber-600">
+                <span className="text-gray-500 dark:text-gray-400">Déficit agresivo</span>
+                <span className="font-semibold text-amber-600 dark:text-amber-400">
                   {results.deficitAggressive} kcal/día
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Mínimo seguro (80% BMR)</span>
-                <span className="font-semibold text-red-500">
+                <span className="text-gray-500 dark:text-gray-400">Mínimo seguro (80% BMR)</span>
+                <span className="font-semibold text-red-500 dark:text-red-400">
                   {results.minSafe} kcal/día
                 </span>
               </div>
@@ -284,10 +282,10 @@ export default function MorePage() {
           </div>
 
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-            <h3 className="font-semibold text-amber-800 text-sm mb-2">
+            <h3 className="font-semibold text-amber-800 dark:text-amber-300 text-sm mb-2">
               ⚠️ Advertencia del endocrino
             </h3>
-            <p className="text-sm text-amber-700 leading-relaxed">
+            <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
               Tu mínimo seguro es de <strong>{results.minSafe} kcal/día</strong>.
               Comer por debajo de esta cantidad de forma prolongada puede causar
               pérdida de masa muscular, ralentización metabólica, deficiencias
@@ -299,10 +297,10 @@ export default function MorePage() {
           </div>
 
           <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-4">
-            <h3 className="font-semibold text-indigo-800 text-sm mb-2">
+            <h3 className="font-semibold text-indigo-800 dark:text-indigo-300 text-sm mb-2">
               💡 Recomendaciones
             </h3>
-            <ul className="text-sm text-indigo-700 space-y-1.5">
+            <ul className="text-sm text-indigo-700 dark:text-indigo-300 space-y-1.5">
               <li>• Prioriza proteína (1.6-2g por kg de peso) para preservar músculo</li>
               <li>• Bebe 2-3L de agua al día</li>
               <li>• Pésate siempre a la misma hora (mañana, ayunas)</li>
@@ -316,10 +314,10 @@ export default function MorePage() {
       ) : null}
 
       {section === 'presets' && (
-        <div className="bg-white rounded-2xl p-4 shadow-sm">
-          <h2 className="font-semibold text-gray-700 mb-3">Comidas frecuentes</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm">
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-3">Comidas frecuentes</h2>
           {presets.length === 0 ? (
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-400 dark:text-gray-500">
               Las comidas que registres se guardarán aquí automáticamente para
               reutilizarlas.
             </p>
@@ -330,7 +328,7 @@ export default function MorePage() {
                   key={p.id}
                   className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0"
                 >
-                  <span className="text-sm text-gray-700">{p.name}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{p.name}</span>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-indigo-600 font-medium">
                       {p.calories} kcal
@@ -355,9 +353,9 @@ export default function MorePage() {
 
       {section === 'export' && (
         <div className="space-y-4">
-          <div className="bg-white rounded-2xl p-4 shadow-sm space-y-3">
-            <h2 className="font-semibold text-gray-700">Exportar datos</h2>
-            <p className="text-sm text-gray-400">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3">
+            <h2 className="font-semibold text-gray-700 dark:text-gray-200">Exportar datos</h2>
+            <p className="text-sm text-gray-400 dark:text-gray-500">
               Descarga todos tus datos (comidas, pesos, fotos, ajustes) en un archivo
               JSON para hacer copia de seguridad o migrar a otro dispositivo.
             </p>
@@ -369,9 +367,9 @@ export default function MorePage() {
             </button>
           </div>
 
-          <div className="bg-white rounded-2xl p-4 shadow-sm space-y-3">
-            <h2 className="font-semibold text-gray-700">Importar datos</h2>
-            <p className="text-sm text-gray-400">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3">
+            <h2 className="font-semibold text-gray-700 dark:text-gray-200">Importar datos</h2>
+            <p className="text-sm text-gray-400 dark:text-gray-500">
               Carga un archivo JSON exportado previamente para restaurar o migrar
               tus datos.
             </p>
@@ -380,7 +378,7 @@ export default function MorePage() {
                 onClick={() => setImportMode('merge')}
                 className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition ${
                   importMode === 'merge'
-                    ? 'bg-indigo-100 text-indigo-700'
+                    ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300'
                     : 'bg-gray-100 text-gray-500'
                 }`}
               >
@@ -399,7 +397,7 @@ export default function MorePage() {
             </div>
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200"
+              className="w-full py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-xl text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700"
             >
               📥 Cargar archivo
             </button>
