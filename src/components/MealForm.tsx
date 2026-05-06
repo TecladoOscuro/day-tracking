@@ -6,11 +6,13 @@ interface Props {
   onSave: (data: { description: string; calories: number }) => void;
   onDelete?: () => void;
   onClose: () => void;
+  initialDescription?: string;
+  initialCalories?: number;
 }
 
-export default function MealForm({ onSave, onDelete, onClose }: Props) {
-  const [description, setDescription] = useState('');
-  const [calories, setCalories] = useState<number | ''>('');
+export default function MealForm({ onSave, onDelete, onClose, initialDescription = '', initialCalories }: Props) {
+  const [description, setDescription] = useState(initialDescription);
+  const [calories, setCalories] = useState<number | ''>(initialCalories ?? '');
   const [showPresets, setShowPresets] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {

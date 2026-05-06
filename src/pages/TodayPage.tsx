@@ -146,6 +146,8 @@ export default function TodayPage() {
 
       {showForm && (
         <MealForm
+          initialDescription={editingMeal?.description}
+          initialCalories={editingMeal?.calories}
           onSave={handleSave}
           onDelete={editingMeal ? handleDelete : undefined}
           onClose={() => {
