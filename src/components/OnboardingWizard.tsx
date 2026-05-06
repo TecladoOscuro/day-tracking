@@ -187,6 +187,10 @@ export default function OnboardingWizard({ onComplete }: Props) {
                 <span className="font-bold text-gray-900 dark:text-white">{results.imc} — {results.imcLabel}</span>
               </div>
               <div className="flex justify-between text-sm">
+                <span className="text-gray-600 dark:text-gray-400">Grasa corporal (est.)</span>
+                <span className="font-bold text-gray-900 dark:text-white">{results.bodyFat}% — {results.bodyFatLabel}</span>
+              </div>
+              <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Peso ideal</span>
                 <span className="font-bold text-gray-900 dark:text-white">
                   {results.idealMinWeight} – {results.idealMaxWeight} kg
