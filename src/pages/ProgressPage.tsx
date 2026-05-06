@@ -225,7 +225,7 @@ export default function ProgressPage() {
         <WeightChart weights={weights} target={goals.weightTarget} year={selectedYear !== 'all' ? selectedYear : undefined} />
       )}
 
-      {(!yearMonthlyData || selectedYear === 'all') && (
+      {(!yearMonthlyData || selectedYear === 'all' || tab === 'weight') && (
         <div className="mt-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
