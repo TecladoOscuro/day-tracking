@@ -8,20 +8,68 @@ import StreakBadge from '../components/StreakBadge';
 import { getLastNDays, formatDate, formatMonthYear } from '../utils/dates';
 import { exportAllData, downloadJSON } from '../utils/exportImport';
 
+type Range = 30 | 90 | 365;
+
 export default function ProgressPage() {
   const { meals, getTotalByDate } = useMeals();
   const { weights } = useWeights();
   const { goals } = useGoals();
-  const [range, setRange] = useState<30 | 90 | 365>(30);
+  const [range, setRange] = useState<Range>(30);
   const [tab, setTab] = useState<'kcal' | 'weight'>('kcal');
+  const [selectedYear, setSelectedYear] = useState<number | 'all'>('all');
+
+  const dataYears = useMemo(() => {
+    const years = new Set<number>();
+    meals.forEach((m) => {
+      const y = parseInt(m.date.substring(0, 4));
+      if (!isNaN(y)) years.add(y);
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  }, [meals]);
+
+  const yearMonthlyData = useMemo(() => {
+    if (selectedYear === 'all') return null;
+    const months: { month: string; total: number; days: number; inGoal: number }[] = [];
+    for (let m = 0; m < 12; m++) {
+      const prefix = `${selectedYear}-${String(m + 1).padStart(2, '0')}`;
+      let total = 0;
+      const daysSet = new Set<string>();
+      let inGoal = 0;
+      meals.forEach((meal) => {
+        if (meal.date.startsWith(prefix)) {
+          total += meal.calories;
+          daysSet.add(meal.date);
+        }
+      });
+      daysSet.forEach((date) => {
+        const t = getTotalByDate(date);
+        if (t > 0 && t <= goals.kcalTarget) inGoal++;
+      });
+      if (daysSet.size > 0) {
+        months.push({
+          month: prefix,
+          total,
+          days: daysSet.size,
+          inGoal,
+        });
+      }
+    }
+    return months;
+  }, [selectedYear, meals, goals.kcalTarget, getTotalByDate]);
 
   const calData = useMemo(() => {
-    const days = getLastNDays(range);
-    return days.map((d) => ({
-      date: formatDate(d),
-      calories: getTotalByDate(formatDate(d)),
-    }));
-  }, [range, meals, getTotalByDate]);
+    if (selectedYear === 'all') {
+      const days = getLastNDays(range);
+      return days.map((d) => ({
+        date: formatDate(d),
+        calories: getTotalByDate(formatDate(d)),
+      }));
+    }
+    return yearMonthlyData?.filter((m) => m.days > 0).map((m) => ({
+      date: m.month,
+      calories: m.total,
+    })) || [];
+  }, [range, selectedYear, meals, getTotalByDate, yearMonthlyData]);
 
   const streak = useMemo(() => {
     let count = 0;
@@ -30,11 +78,8 @@ export default function ProgressPage() {
       const d = new Date(today);
       d.setDate(d.getDate() - i);
       const total = getTotalByDate(formatDate(d));
-      if (total > 0 && total <= goals.kcalTarget) {
-        count++;
-      } else {
-        break;
-      }
+      if (total > 0 && total <= goals.kcalTarget) count++;
+      else break;
     }
     return count;
   }, [meals, goals.kcalTarget, getTotalByDate]);
@@ -43,15 +88,14 @@ export default function ProgressPage() {
     const map = new Map<string, { total: number; days: number; inGoal: number }>();
     meals.forEach((m) => {
       const month = m.date.substring(0, 7);
-      if (!map.has(month)) {
-        map.set(month, { total: 0, days: 0, inGoal: 0 });
-      }
-      const entry = map.get(month)!;
-      entry.total += m.calories;
+      if (selectedYear !== 'all' && !month.startsWith(String(selectedYear))) return;
+      if (!map.has(month)) map.set(month, { total: 0, days: 0, inGoal: 0 });
+      map.get(month)!.total += m.calories;
     });
     const daySet = new Map<string, Set<string>>();
     meals.forEach((m) => {
       const month = m.date.substring(0, 7);
+      if (selectedYear !== 'all' && !month.startsWith(String(selectedYear))) return;
       if (!daySet.has(month)) daySet.set(month, new Set());
       daySet.get(month)!.add(m.date);
     });
@@ -66,12 +110,19 @@ export default function ProgressPage() {
     return Array.from(map.entries())
       .sort((a, b) => b[0].localeCompare(a[0]))
       .map(([month, data]) => ({ month, ...data }));
-  }, [meals, goals.kcalTarget]);
+  }, [meals, goals.kcalTarget, selectedYear, getTotalByDate]);
 
   const handleExport = async () => {
     const data = await exportAllData();
     downloadJSON(data, `daytracking-${new Date().toISOString().split('T')[0]}.json`);
   };
+
+  const btnClass = (active: boolean) =>
+    `px-3 py-1 rounded-lg text-xs font-medium transition ${
+      active
+        ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300'
+        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+    }`;
 
   return (
     <div className="px-4 pt-6 pb-4">
@@ -99,18 +150,25 @@ export default function ProgressPage() {
 
       {tab === 'kcal' && (
         <>
-          <div className="flex gap-1 mb-3">
-            {([30, 90, 365] as const).map((r) => (
+          <div className="flex items-center gap-1 mb-3 flex-wrap">
+            <span className="text-[10px] text-gray-400 dark:text-gray-500 mr-1">Rango:</span>
+            {([30, 90, 365] as Range[]).map((r) => (
               <button
                 key={r}
-                onClick={() => setRange(r)}
-                className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
-                  range === r
-                    ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300'
-                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
+                onClick={() => { setRange(r); setSelectedYear('all'); }}
+                className={btnClass(range === r && selectedYear === 'all')}
               >
-                {r} días
+                {r}d
+              </button>
+            ))}
+            <span className="text-[10px] text-gray-400 dark:text-gray-500 mx-1">·</span>
+            {dataYears.map((y) => (
+              <button
+                key={y}
+                onClick={() => setSelectedYear(y)}
+                className={btnClass(selectedYear === y)}
+              >
+                {y}
               </button>
             ))}
           </div>
@@ -119,6 +177,39 @@ export default function ProgressPage() {
             target={goals.kcalTarget}
             orangePct={goals.orangePct}
           />
+
+          {yearMonthlyData && (
+            <div className="mt-4 space-y-2">
+              <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                {selectedYear} — mensual
+              </h3>
+              {yearMonthlyData.map((m) => (
+                <div
+                  key={m.month}
+                  className="bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm flex items-center justify-between"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                      {formatMonthYear(new Date(m.month + '-01'))}
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
+                      {m.days} días · Media {m.days > 0 ? Math.round(m.total / m.days) : 0} kcal/día
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-sm font-bold text-gray-800 dark:text-white">
+                      {m.total} kcal
+                    </span>
+                    {m.days > 0 && (
+                      <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                        {m.inGoal}/{m.days} en objetivo
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </>
       )}
 
@@ -126,48 +217,64 @@ export default function ProgressPage() {
         <WeightChart weights={weights} target={goals.weightTarget} />
       )}
 
-      <div className="mt-4 mb-20">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">Resumen mensual</h3>
-          <button
-            onClick={handleExport}
-            className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline"
-          >
-            📤 Exportar
-          </button>
-        </div>
-        <div className="space-y-2">
-          {monthlySummary.length === 0 ? (
-            <p className="text-xs text-gray-400 dark:text-gray-500">Sin datos aún</p>
-          ) : (
-            monthlySummary.map((m) => (
-              <div
-                key={m.month}
-                className="bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm flex items-center justify-between"
+      {(!yearMonthlyData || selectedYear === 'all') && (
+        <div className="mt-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+              Resumen mensual
+            </h3>
+            <div className="flex items-center gap-1">
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                className="text-xs border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg px-2 py-1"
               >
-                <div>
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                    {formatMonthYear(new Date(m.month + '-01'))}
-                  </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">
-                    {m.days} días · Media {m.days > 0 ? Math.round(m.total / m.days) : 0} kcal/día
-                  </p>
-                </div>
-                <div className="text-right">
-                  <span className="text-sm font-bold text-gray-800 dark:text-white">
-                    {m.total} kcal
-                  </span>
-                  {m.days > 0 && (
-                    <p className="text-xs text-emerald-600">
-                      {m.inGoal}/{m.days} días en objetivo
+                <option value="all">Todo</option>
+                {dataYears.map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+              <button
+                onClick={handleExport}
+                className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline ml-2"
+              >
+                📤 Exportar
+              </button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {monthlySummary.length === 0 ? (
+              <p className="text-xs text-gray-400 dark:text-gray-500">Sin datos aún</p>
+            ) : (
+              monthlySummary.map((m) => (
+                <div
+                  key={m.month}
+                  className="bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm flex items-center justify-between"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                      {formatMonthYear(new Date(m.month + '-01'))}
                     </p>
-                  )}
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
+                      {m.days} días · Media {m.days > 0 ? Math.round(m.total / m.days) : 0} kcal/día
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-sm font-bold text-gray-800 dark:text-white">
+                      {m.total} kcal
+                    </span>
+                    {m.days > 0 && (
+                      <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                        {m.inGoal}/{m.days} en objetivo
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
               ))
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

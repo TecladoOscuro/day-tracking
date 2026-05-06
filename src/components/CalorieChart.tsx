@@ -25,13 +25,20 @@ export default function CalorieChart({ data, target, orangePct }: Props) {
     );
   }
 
-  const chartData = data.map((d) => ({
-    ...d,
-    date: new Date(d.date + 'T00:00:00').toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'short',
-    }),
-  }));
+  const chartData = data.map((d) => {
+    const isMonthly = /^\d{4}-\d{2}$/.test(d.date);
+    if (isMonthly) {
+      const [y, m] = d.date.split('-');
+      return {
+        ...d,
+        date: new Date(Number(y), Number(m) - 1).toLocaleDateString('es-ES', { month: 'short' }),
+      };
+    }
+    return {
+      ...d,
+      date: new Date(d.date + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }),
+    };
+  });
 
   const getColor = (calories: number) => {
     if (target <= 0) return '#6366f1';
