@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useGoals } from '../hooks/useGoals';
 import { useProfile } from '../hooks/useProfile';
 import { useSettings } from '../hooks/useSettings';
+import { useWeights } from '../hooks/useWeights';
 import { useFoodPresets } from '../hooks/useFoodPresets';
 import { useTheme } from '../hooks/useTheme';
 import { exportAllData, downloadJSON, importData } from '../utils/exportImport';
@@ -15,15 +16,12 @@ export default function MorePage() {
   const { profile, hasProfile } = useProfile();
   const { settings, saveSettings } = useSettings();
   const { presets, deletePreset } = useFoodPresets();
+  const { weights } = useWeights();
   const { theme, toggle: toggleTheme } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [localGoals, setLocalGoals] = useState<Goals>(goals);
   const [localSettings, setLocalSettings] = useState<Settings>(settings);
-
-  useEffect(() => { setLocalGoals(goals); setKcalStr(String(goals.kcalTarget)); setWeightStr(String(goals.weightTarget)); setOrangeStr(String(goals.orangePct)); setRedStr(String(goals.redPct)); }, [goals]);
-  useEffect(() => { setLocalSettings(settings); }, [settings]);
-
   const [section, setSection] = useState<
     'goals' | 'profile' | 'advice' | 'export' | 'presets'
   >('goals');
@@ -34,9 +32,16 @@ export default function MorePage() {
   const [orangeStr, setOrangeStr] = useState(String(goals.orangePct));
   const [redStr, setRedStr] = useState(String(goals.redPct));
 
+  useEffect(() => { setLocalGoals(goals); setKcalStr(String(goals.kcalTarget)); setWeightStr(String(goals.weightTarget)); setOrangeStr(String(goals.orangePct)); setRedStr(String(goals.redPct)); }, [goals]);
+  useEffect(() => { setLocalSettings(settings); }, [settings]);
+
+  const latestWeight = weights.length > 0 ? weights[weights.length - 1].weight : null;
+
+  const currentWeight = latestWeight ?? profile?.currentWeight ?? 70;
+
   const results = profile
     ? getFullResults(
-        profile.currentWeight,
+        currentWeight,
         profile.height,
         profile.age,
         profile.sex,
@@ -232,7 +237,7 @@ export default function MorePage() {
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                   <p className="text-xs text-gray-400 dark:text-gray-500">Peso</p>
-                  <p className="font-semibold dark:text-white">{profile.currentWeight} kg</p>
+                  <p className="font-semibold dark:text-white">{latestWeight ?? profile.currentWeight} kg</p>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                   <p className="text-xs text-gray-400 dark:text-gray-500">Edad</p>
