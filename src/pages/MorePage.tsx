@@ -5,6 +5,7 @@ import { useSettings } from '../hooks/useSettings';
 import { useFoodPresets } from '../hooks/useFoodPresets';
 import { useTheme } from '../hooks/useTheme';
 import { exportAllData, downloadJSON, importData } from '../utils/exportImport';
+import { db } from '../db/database';
 import { getFullResults, ACTIVITY_LABELS } from '../utils/endocrine';
 import type { WeekStart } from '../types';
 import type { Goals, Settings } from '../types';
@@ -57,6 +58,18 @@ export default function MorePage() {
     if (success) {
       setTimeout(() => window.location.reload(), 1500);
     }
+  };
+
+  const handleReset = async () => {
+    if (!window.confirm('¿Seguro que quieres borrar TODOS los datos? Esta acción no se puede deshacer.')) return;
+    if (!window.confirm('Última advertencia: se perderán todas las comidas, pesos, fotos y ajustes. ¿Continuar?')) return;
+    await db.meals.clear();
+    await db.weights.clear();
+    await db.profile.clear();
+    await db.goals.clear();
+    await db.settings.clear();
+    await db.foodPresets.clear();
+    window.location.reload();
   };
 
   const tabs = [
@@ -212,8 +225,17 @@ export default function MorePage() {
                   <p className="font-semibold dark:text-white">
                     {profile.sex === 'male' ? 'Hombre' : 'Mujer'}
                   </p>
-                </div>
-              </div>
+          </div>
+
+          <div className="mt-4">
+            <button
+              onClick={handleReset}
+              className="w-full py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm font-medium hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
+            >
+              🗑️ Borrar todos los datos
+            </button>
+          </div>
+        </div>
               <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                 <p className="text-xs text-gray-400 dark:text-gray-500">Actividad</p>
                 <p className="font-semibold dark:text-white text-sm">
