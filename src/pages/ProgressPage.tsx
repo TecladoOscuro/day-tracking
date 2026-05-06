@@ -150,27 +150,31 @@ export default function ProgressPage() {
 
       {tab === 'kcal' && (
         <>
-          <div className="flex items-center gap-1 mb-3 flex-wrap">
-            <span className="text-[10px] text-gray-400 dark:text-gray-500 mr-1">Rango:</span>
-            {([30, 90, 365] as Range[]).map((r) => (
-              <button
-                key={r}
-                onClick={() => { setRange(r); setSelectedYear('all'); }}
-                className={btnClass(range === r && selectedYear === 'all')}
-              >
-                {r}d
-              </button>
-            ))}
-            <span className="text-[10px] text-gray-400 dark:text-gray-500 mx-1">·</span>
-            {dataYears.map((y) => (
-              <button
-                key={y}
-                onClick={() => setSelectedYear(y)}
-                className={btnClass(selectedYear === y)}
-              >
-                {y}
-              </button>
-            ))}
+          <div className="flex items-center gap-2 mb-3 overflow-x-auto pb-1 -mx-1 px-1">
+            <span className="text-[10px] text-gray-400 dark:text-gray-500 shrink-0">Rango:</span>
+            <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5 shrink-0">
+              {([30, 90, 365] as Range[]).map((r) => (
+                <button
+                  key={r}
+                  onClick={() => { setRange(r); setSelectedYear('all'); }}
+                  className={btnClass(range === r && selectedYear === 'all')}
+                >
+                  {r} días
+                </button>
+              ))}
+            </div>
+            <span className="w-px h-5 bg-gray-300 dark:bg-gray-600 shrink-0" />
+            <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5 shrink-0">
+              {dataYears.map((y) => (
+                <button
+                  key={y}
+                  onClick={() => setSelectedYear(y)}
+                  className={btnClass(selectedYear === y)}
+                >
+                  {y}
+                </button>
+              ))}
+            </div>
           </div>
           <CalorieChart
             data={calData}
