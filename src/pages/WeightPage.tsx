@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useWeights } from '../hooks/useWeights';
 import { useGoals } from '../hooks/useGoals';
 import { useProfile } from '../hooks/useProfile';
@@ -14,6 +14,16 @@ export default function WeightPage() {
   const { profile } = useProfile();
   const [showForm, setShowForm] = useState(false);
   const [tab, setTab] = useState<'chart' | 'photos' | 'compare'>('chart');
+  const [weightYear, setWeightYear] = useState<number | 'all'>('all');
+
+  const weightYears = useMemo(() => {
+    const years = new Set<number>();
+    weights.forEach((w) => {
+      const y = parseInt(w.date.substring(0, 4));
+      if (!isNaN(y)) years.add(y);
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  }, [weights]);
 
   const latest = weights.length > 0 ? weights[weights.length - 1] : null;
   const imc = latest && profile
@@ -88,7 +98,36 @@ export default function WeightPage() {
           </div>
 
           {tab === 'chart' && (
-            <WeightChart weights={weights} target={goals.weightTarget} />
+            <>
+              {weightYears.length > 1 && (
+                <div className="flex gap-1 mb-3 overflow-x-auto pb-1 flex-wrap">
+                  <button
+                    onClick={() => setWeightYear('all')}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-medium transition ${
+                      weightYear === 'all'
+                        ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300'
+                        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    Todo
+                  </button>
+                  {weightYears.map((y) => (
+                    <button
+                      key={y}
+                      onClick={() => setWeightYear(y)}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-medium transition ${
+                        weightYear === y
+                          ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300'
+                          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                      }`}
+                    >
+                      {y}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <WeightChart weights={weights} target={goals.weightTarget} year={weightYear} />
+            </>
           )}
           {tab === 'photos' && <ProgressPhotos weights={weights} />}
           {tab === 'compare' && <PhotoCompare weights={weights} />}

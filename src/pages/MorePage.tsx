@@ -21,7 +21,7 @@ export default function MorePage() {
   const [localGoals, setLocalGoals] = useState<Goals>(goals);
   const [localSettings, setLocalSettings] = useState<Settings>(settings);
 
-  useEffect(() => { setLocalGoals(goals); }, [goals]);
+  useEffect(() => { setLocalGoals(goals); setKcalStr(String(goals.kcalTarget)); setWeightStr(String(goals.weightTarget)); setOrangeStr(String(goals.orangePct)); setRedStr(String(goals.redPct)); }, [goals]);
   useEffect(() => { setLocalSettings(settings); }, [settings]);
 
   const [section, setSection] = useState<
@@ -29,6 +29,10 @@ export default function MorePage() {
   >('goals');
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const [importMode, setImportMode] = useState<'replace' | 'merge'>('merge');
+  const [kcalStr, setKcalStr] = useState(String(goals.kcalTarget));
+  const [weightStr, setWeightStr] = useState(String(goals.weightTarget));
+  const [orangeStr, setOrangeStr] = useState(String(goals.orangePct));
+  const [redStr, setRedStr] = useState(String(goals.redPct));
 
   const results = profile
     ? getFullResults(
@@ -108,12 +112,17 @@ export default function MorePage() {
               Objetivo diario (kcal)
             </label>
             <input
-              type="number"
-              value={localGoals.kcalTarget}
-              onChange={(e) =>
-                setLocalGoals({ ...localGoals, kcalTarget: Number(e.target.value) || 0 })
-              }
-              onBlur={() => saveGoals(localGoals)}
+              type="text"
+              inputMode="numeric"
+              value={kcalStr}
+              onChange={(e) => setKcalStr(e.target.value)}
+              onBlur={() => {
+                const num = parseInt(kcalStr) || 0;
+                setKcalStr(String(num));
+                const next = { ...localGoals, kcalTarget: num };
+                setLocalGoals(next);
+                saveGoals(next);
+              }}
               className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
@@ -122,15 +131,17 @@ export default function MorePage() {
               Objetivo de peso (kg)
             </label>
             <input
-              type="number"
-              value={localGoals.weightTarget}
-              onChange={(e) =>
-                setLocalGoals({
-                  ...localGoals,
-                  weightTarget: Number(e.target.value) || 0,
-                })
-              }
-              onBlur={() => saveGoals(localGoals)}
+              type="text"
+              inputMode="decimal"
+              value={weightStr}
+              onChange={(e) => setWeightStr(e.target.value)}
+              onBlur={() => {
+                const num = parseFloat(weightStr) || 0;
+                setWeightStr(String(num));
+                const next = { ...localGoals, weightTarget: num };
+                setLocalGoals(next);
+                saveGoals(next);
+              }}
               className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
@@ -140,15 +151,17 @@ export default function MorePage() {
                 Umbral 🟠 (%)
               </label>
               <input
-                type="number"
-                value={localGoals.orangePct}
-                onChange={(e) =>
-                  setLocalGoals({
-                    ...localGoals,
-                    orangePct: Number(e.target.value) || 100,
-                  })
-                }
-                onBlur={() => saveGoals(localGoals)}
+                type="text"
+                inputMode="numeric"
+                value={orangeStr}
+                onChange={(e) => setOrangeStr(e.target.value)}
+                onBlur={() => {
+                  const num = parseInt(orangeStr) || 100;
+                  setOrangeStr(String(num));
+                  const next = { ...localGoals, orangePct: num };
+                  setLocalGoals(next);
+                  saveGoals(next);
+                }}
                 className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>
@@ -157,12 +170,17 @@ export default function MorePage() {
                 Umbral 🔴 (%)
               </label>
               <input
-                type="number"
-                value={localGoals.redPct}
-                onChange={(e) =>
-                  setLocalGoals({ ...localGoals, redPct: Number(e.target.value) || 100 })
-                }
-                onBlur={() => saveGoals(localGoals)}
+                type="text"
+                inputMode="numeric"
+                value={redStr}
+                onChange={(e) => setRedStr(e.target.value)}
+                onBlur={() => {
+                  const num = parseInt(redStr) || 100;
+                  setRedStr(String(num));
+                  const next = { ...localGoals, redPct: num };
+                  setLocalGoals(next);
+                  saveGoals(next);
+                }}
                 className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>

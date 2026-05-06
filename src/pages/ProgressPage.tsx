@@ -24,8 +24,12 @@ export default function ProgressPage() {
       const y = parseInt(m.date.substring(0, 4));
       if (!isNaN(y)) years.add(y);
     });
+    weights.forEach((w) => {
+      const y = parseInt(w.date.substring(0, 4));
+      if (!isNaN(y)) years.add(y);
+    });
     return Array.from(years).sort((a, b) => b - a);
-  }, [meals]);
+  }, [meals, weights]);
 
   const yearMonthlyData = useMemo(() => {
     if (selectedYear === 'all') return null;
@@ -218,7 +222,7 @@ export default function ProgressPage() {
       )}
 
       {tab === 'weight' && (
-        <WeightChart weights={weights} target={goals.weightTarget} />
+        <WeightChart weights={weights} target={goals.weightTarget} year={selectedYear !== 'all' ? selectedYear : undefined} />
       )}
 
       {(!yearMonthlyData || selectedYear === 'all') && (

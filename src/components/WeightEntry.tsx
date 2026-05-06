@@ -47,7 +47,7 @@ export default function WeightEntry({
   initialNote,
 }: Props) {
   const [date, setDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
-  const [weight, setWeight] = useState(initialWeight || '');
+  const [weight, setWeight] = useState<number | ''>(initialWeight ?? '');
   const [photo, setPhoto] = useState(initialPhoto || '');
   const [note, setNote] = useState(initialNote || '');
   const [photoError, setPhotoError] = useState('');
@@ -110,7 +110,10 @@ export default function WeightEntry({
               id="weight-kg"
               type="number"
               value={weight}
-              onChange={(e) => setWeight(Number(e.target.value))}
+              onChange={(e) => {
+                const val = e.target.value;
+                setWeight(val === '' ? '' : Number(val));
+              }}
               placeholder="85.5"
               step="0.1"
               min={30}

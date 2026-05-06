@@ -71,9 +71,9 @@ export function calculateHamwiIdeal(
 ): number {
   const inches = heightCm / 2.54;
   if (sex === 'male') {
-    return Math.round((48 + 1.1 * (inches - 60)) * 10) / 10;
+    return Math.round((48 + 2.7 * (inches - 60)) * 10) / 10;
   }
-  return Math.round((45.5 + 0.9 * (inches - 60)) * 10) / 10;
+  return Math.round((45.5 + 2.3 * (inches - 60)) * 10) / 10;
 }
 
 export function estimateWeeklyLoss(tdee: number, dailyKcal: number): number {
