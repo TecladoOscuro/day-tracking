@@ -17,7 +17,7 @@ export default function ProgressPhotos({ weights }: Props) {
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm">
-      <h3 className="text-sm font-semibold text-gray-600 mb-3">
+      <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
         Galería de progreso
       </h3>
       <div className="grid grid-cols-3 gap-2">

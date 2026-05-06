@@ -145,8 +145,8 @@ export default function OnboardingWizard({ onComplete }: Props) {
                 onClick={() => setActivity(key as ActivityLevel)}
                 className={`w-full text-left p-3 rounded-xl border-2 transition ${
                   activity === key
-                    ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950 dark:border-indigo-400'
-                    : 'border-gray-100 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-500'
+                    ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950 dark:border-indigo-400 text-gray-900 dark:text-indigo-200'
+                    : 'border-gray-100 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
                 }`}
               >
                 <span className="font-medium text-sm">{label}</span>
@@ -176,41 +176,41 @@ export default function OnboardingWizard({ onComplete }: Props) {
             <div className="bg-gradient-to-br from-indigo-50 dark:from-indigo-950 to-indigo-100 dark:to-indigo-900 rounded-2xl p-4 space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Metabolismo basal (BMR)</span>
-                <span className="font-bold text-indigo-700">{results.bmr} kcal</span>
+                <span className="font-bold text-indigo-700 dark:text-indigo-300">{results.bmr} kcal</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Gasto diario (TDEE)</span>
-                <span className="font-bold text-indigo-700">{results.tdee} kcal</span>
+                <span className="font-bold text-indigo-700 dark:text-indigo-300">{results.tdee} kcal</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">IMC</span>
-                <span className="font-bold">{results.imc} — {results.imcLabel}</span>
+                <span className="font-bold text-gray-900 dark:text-white">{results.imc} — {results.imcLabel}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Peso ideal</span>
-                <span className="font-bold">
+                <span className="font-bold text-gray-900 dark:text-white">
                   {results.idealMinWeight} – {results.idealMaxWeight} kg
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Déficit moderado</span>
-                <span className="font-bold text-emerald-600">
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">
                   {results.deficitModerate} kcal/día
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Déficit agresivo</span>
-                <span className="font-bold text-amber-600">
+                <span className="font-bold text-amber-600 dark:text-amber-400">
                   {results.deficitAggressive} kcal/día
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Mínimo seguro (80% BMR)</span>
-                <span className="font-bold text-red-500">{results.minSafe} kcal</span>
+                <span className="font-bold text-red-500 dark:text-red-400">{results.minSafe} kcal</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Pérdida estimada/semana</span>
-                <span className="font-bold text-emerald-600">
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">
                   ~{results.estimatedLoss.toFixed(2)} kg
                 </span>
               </div>

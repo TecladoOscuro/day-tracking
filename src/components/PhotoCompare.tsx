@@ -28,7 +28,7 @@ export default function PhotoCompare({ weights }: Props) {
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm">
-      <h3 className="text-sm font-semibold text-gray-600 mb-3">
+      <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
         Comparación de progreso
       </h3>
       <div className="grid grid-cols-2 gap-2 mb-3">
@@ -77,7 +77,7 @@ export default function PhotoCompare({ weights }: Props) {
         <p className="text-center text-sm text-gray-600">
           De {left.weight}kg a {right.weight}kg →{' '}
           <span
-            className={`font-bold ${right.weight <= left.weight ? 'text-emerald-600' : 'text-red-500'}`}
+            className={`font-bold ${right.weight <= left.weight ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}
           >
             {right.weight <= left.weight ? '↓' : '↑'}{' '}
             {Math.abs(right.weight - left.weight).toFixed(1)} kg
