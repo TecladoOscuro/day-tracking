@@ -42,7 +42,7 @@ export default function CalorieChart({ data, target, orangePct }: Props) {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm">
       <h3 className="text-sm font-semibold text-gray-600 mb-2">Calorías diarias</h3>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={chartData}>

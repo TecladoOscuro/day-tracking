@@ -326,8 +326,8 @@ export default function MorePage() {
               {presets.map((p) => (
                 <div
                   key={p.id}
-                  className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0"
-                >
+                className="flex items-center justify-between py-2 border-b border-gray-50 dark:border-gray-800 last:border-0"
+              >
                   <span className="text-sm text-gray-700 dark:text-gray-200">{p.name}</span>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-indigo-600 font-medium">
@@ -379,7 +379,7 @@ export default function MorePage() {
                 className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition ${
                   importMode === 'merge'
                     ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300'
-                    : 'bg-gray-100 text-gray-500'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400'
                 }`}
               >
                 Fusionar
@@ -388,8 +388,8 @@ export default function MorePage() {
                 onClick={() => setImportMode('replace')}
                 className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition ${
                   importMode === 'replace'
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-500'
+                    ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400'
                 }`}
               >
                 Reemplazar

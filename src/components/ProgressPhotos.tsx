@@ -16,14 +16,14 @@ export default function ProgressPhotos({ weights }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm">
       <h3 className="text-sm font-semibold text-gray-600 mb-3">
         Galería de progreso
       </h3>
       <div className="grid grid-cols-3 gap-2">
         {photos.map((w) => (
           <div key={w.id} className="relative group">
-            <div className="aspect-square rounded-xl overflow-hidden bg-gray-100">
+            <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
               <img
                 src={w.photo}
                 alt={w.date}

@@ -145,8 +145,8 @@ export default function OnboardingWizard({ onComplete }: Props) {
                 onClick={() => setActivity(key as ActivityLevel)}
                 className={`w-full text-left p-3 rounded-xl border-2 transition ${
                   activity === key
-                    ? 'border-indigo-500 bg-indigo-50'
-                    : 'border-gray-100 hover:border-gray-300'
+                    ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950 dark:border-indigo-400'
+                    : 'border-gray-100 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-500'
                 }`}
               >
                 <span className="font-medium text-sm">{label}</span>
@@ -216,7 +216,7 @@ export default function OnboardingWizard({ onComplete }: Props) {
               </div>
             </div>
 
-            <p className="text-xs text-amber-600 bg-amber-50 p-3 rounded-xl">
+            <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 p-3 rounded-xl">
               ⚠️ Como endocrino te recomiendo no bajar de {results.minSafe} kcal/día (80% de tu BMR). Por debajo de ese umbral el riesgo de pérdida muscular, efecto rebote y deficiencias nutricionales es alto. Un déficit de 500 kcal/día es la estrategia más segura y sostenible a largo plazo.
             </p>
 

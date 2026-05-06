@@ -27,13 +27,13 @@ export default function PhotoCompare({ weights }: Props) {
   const right = photos[rightIdx];
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm">
       <h3 className="text-sm font-semibold text-gray-600 mb-3">
         Comparación de progreso
       </h3>
       <div className="grid grid-cols-2 gap-2 mb-3">
         <div>
-          <div className="aspect-square rounded-xl overflow-hidden bg-gray-100">
+          <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
             <img
               src={left.photo}
               alt={left.date}
@@ -43,7 +43,7 @@ export default function PhotoCompare({ weights }: Props) {
           <select
             value={leftIdx}
             onChange={(e) => setLeftIdx(Number(e.target.value))}
-            className="w-full mt-1 text-xs rounded-lg border-gray-200 py-1 px-2"
+            className="w-full mt-1 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 py-1 px-2"
           >
             {photos.map((p, i) => (
               <option key={i} value={i}>
@@ -53,7 +53,7 @@ export default function PhotoCompare({ weights }: Props) {
           </select>
         </div>
         <div>
-          <div className="aspect-square rounded-xl overflow-hidden bg-gray-100">
+          <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
             <img
               src={right.photo}
               alt={right.date}
@@ -63,7 +63,7 @@ export default function PhotoCompare({ weights }: Props) {
           <select
             value={rightIdx}
             onChange={(e) => setRightIdx(Number(e.target.value))}
-            className="w-full mt-1 text-xs rounded-lg border-gray-200 py-1 px-2"
+            className="w-full mt-1 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 py-1 px-2"
           >
             {photos.map((p, i) => (
               <option key={i} value={i}>
