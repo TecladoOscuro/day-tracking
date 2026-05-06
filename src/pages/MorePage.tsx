@@ -281,11 +281,11 @@ export default function MorePage() {
             </div>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-            <h3 className="font-semibold text-amber-800 dark:text-amber-300 text-sm mb-2">
+          <div className="bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900 rounded-2xl p-4">
+            <h3 className="font-semibold text-amber-800 dark:text-amber-400 text-sm mb-2">
               ⚠️ Advertencia del endocrino
             </h3>
-            <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
+            <p className="text-sm text-amber-700 dark:text-amber-400/80 leading-relaxed">
               Tu mínimo seguro es de <strong>{results.minSafe} kcal/día</strong>.
               Comer por debajo de esta cantidad de forma prolongada puede causar
               pérdida de masa muscular, ralentización metabólica, deficiencias
@@ -296,11 +296,11 @@ export default function MorePage() {
             </p>
           </div>
 
-          <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-4">
-            <h3 className="font-semibold text-indigo-800 dark:text-indigo-300 text-sm mb-2">
+          <div className="bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-900 rounded-2xl p-4">
+            <h3 className="font-semibold text-indigo-800 dark:text-indigo-400 text-sm mb-2">
               💡 Recomendaciones
             </h3>
-            <ul className="text-sm text-indigo-700 dark:text-indigo-300 space-y-1.5">
+            <ul className="text-sm text-indigo-700 dark:text-indigo-400/80 space-y-1.5">
               <li>• Prioriza proteína (1.6-2g por kg de peso) para preservar músculo</li>
               <li>• Bebe 2-3L de agua al día</li>
               <li>• Pésate siempre a la misma hora (mañana, ayunas)</li>
