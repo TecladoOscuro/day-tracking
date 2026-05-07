@@ -45,15 +45,18 @@ export default function ProgressPage() {
           daysSet.add(meal.date);
         }
       });
+      const todayStr = formatDate(new Date());
       daysSet.forEach((date) => {
+        if (date === todayStr) return;
         const t = getTotalByDate(date);
         if (t > 0 && t <= goals.kcalTarget) inGoal++;
       });
-      if (daysSet.size > 0) {
+      const effectiveDays = Array.from(daysSet).filter((d) => d !== todayStr).length;
+      if (effectiveDays > 0) {
         months.push({
           month: prefix,
           total,
-          days: daysSet.size,
+          days: effectiveDays,
           inGoal,
         });
       }
@@ -89,7 +92,10 @@ export default function ProgressPage() {
   }, [meals, goals.kcalTarget, getTotalByDate]);
 
   const bestStreak = useMemo(() => {
-    const dates = Array.from(new Set(meals.map((m) => m.date))).sort();
+    const todayStr = formatDate(new Date());
+    const dates = Array.from(new Set(meals.map((m) => m.date)))
+      .filter((d) => d !== todayStr)
+      .sort();
     let best = 0;
     let current = 0;
     for (let i = 0; i < dates.length; i++) {
@@ -127,8 +133,10 @@ export default function ProgressPage() {
     });
     daySet.forEach((days, month) => {
       const entry = map.get(month)!;
-      entry.days = days.size;
-      days.forEach((date) => {
+      const todayStr = formatDate(new Date());
+      const filtered = Array.from(days).filter((d) => d !== todayStr);
+      entry.days = filtered.length;
+      filtered.forEach((date) => {
         const total = getTotalByDate(date);
         if (total > 0 && total <= goals.kcalTarget) entry.inGoal++;
       });
