@@ -46,6 +46,9 @@ export default function ProgressPage() {
         }
       });
       const todayStr = formatDate(new Date());
+      if (daysSet.has(todayStr)) {
+        total -= meals.filter((m) => m.date === todayStr && m.date.startsWith(prefix)).reduce((s, m) => s + m.calories, 0);
+      }
       daysSet.forEach((date) => {
         if (date === todayStr) return;
         const t = getTotalByDate(date);
@@ -148,6 +151,12 @@ export default function ProgressPage() {
       if (!map.has(month)) map.set(month, { total: 0, days: 0, inGoal: 0 });
       map.get(month)!.total += m.calories;
     });
+    const todayStr = formatDate(new Date());
+    const todayMonth = todayStr.substring(0, 7);
+    const todayEntry = map.get(todayMonth);
+    if (todayEntry) {
+      todayEntry.total -= meals.filter((m) => m.date === todayStr).reduce((s, m) => s + m.calories, 0);
+    }
     const daySet = new Map<string, Set<string>>();
     meals.forEach((m) => {
       const month = m.date.substring(0, 7);
@@ -157,7 +166,6 @@ export default function ProgressPage() {
     });
     daySet.forEach((days, month) => {
       const entry = map.get(month)!;
-      const todayStr = formatDate(new Date());
       const filtered = Array.from(days).filter((d) => d !== todayStr);
       entry.days = filtered.length;
       filtered.forEach((date) => {
