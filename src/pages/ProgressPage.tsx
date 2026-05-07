@@ -88,6 +88,28 @@ export default function ProgressPage() {
     return count;
   }, [meals, goals.kcalTarget, getTotalByDate]);
 
+  const bestStreak = useMemo(() => {
+    const dates = Array.from(new Set(meals.map((m) => m.date))).sort();
+    let best = 0;
+    let current = 0;
+    for (let i = 0; i < dates.length; i++) {
+      const total = getTotalByDate(dates[i]);
+      if (total > 0 && total <= goals.kcalTarget) {
+        current++;
+        if (current > best) best = current;
+      } else {
+        current = 0;
+      }
+      if (i > 0) {
+        const prev = new Date(dates[i - 1]);
+        const curr = new Date(dates[i]);
+        const diff = Math.round((curr.getTime() - prev.getTime()) / 86400000);
+        if (diff > 1) current = total > 0 && total <= goals.kcalTarget ? 1 : 0;
+      }
+    }
+    return best;
+  }, [meals, goals.kcalTarget, getTotalByDate]);
+
   const monthlySummary = useMemo(() => {
     const map = new Map<string, { total: number; days: number; inGoal: number }>();
     meals.forEach((m) => {
@@ -132,11 +154,17 @@ export default function ProgressPage() {
     <div className="px-4 pt-6 pb-4">
       <h1 className="text-xl font-bold text-gray-800 dark:text-white mb-1">Progreso</h1>
 
-      {streak > 0 && (
-        <div className="mb-3">
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
+        {streak > 0 && (
           <StreakBadge streak={streak} />
-        </div>
-      )}
+        )}
+        {bestStreak > 0 && (
+          <div className="inline-flex items-center gap-1 bg-gradient-to-r from-purple-400 to-pink-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+            <span>🏆</span>
+            <span>Récord: {bestStreak} día{bestStreak !== 1 ? 's' : ''}</span>
+          </div>
+        )}
+      </div>
 
       <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-3">
         {(['kcal', 'weight'] as const).map((t) => (
@@ -191,7 +219,9 @@ export default function ProgressPage() {
               <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
                 {selectedYear} — mensual
               </h3>
-              {yearMonthlyData.map((m) => (
+              {yearMonthlyData.map((m) => {
+                const avg = m.days > 0 ? Math.round(m.total / m.days) : 0;
+                return (
                 <div
                   key={m.month}
                   className="bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm flex items-center justify-between"
@@ -201,13 +231,14 @@ export default function ProgressPage() {
                       {formatMonthYear(new Date(m.month + '-01'))}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
-                      {m.days} días · Media {m.days > 0 ? Math.round(m.total / m.days) : 0} kcal/día
+                      {m.days} días · {m.total} kcal total
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-bold text-gray-800 dark:text-white">
-                      {m.total} kcal
+                    <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                      {avg}
                     </span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 ml-1">kcal/día</span>
                     {m.days > 0 && (
                       <p className="text-xs text-emerald-600 dark:text-emerald-400">
                         {m.inGoal}/{m.days} en objetivo
@@ -215,7 +246,8 @@ export default function ProgressPage() {
                     )}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </>
@@ -254,7 +286,9 @@ export default function ProgressPage() {
             {monthlySummary.length === 0 ? (
               <p className="text-xs text-gray-400 dark:text-gray-500">Sin datos aún</p>
             ) : (
-              monthlySummary.map((m) => (
+              monthlySummary.map((m) => {
+                const avg = m.days > 0 ? Math.round(m.total / m.days) : 0;
+                return (
                 <div
                   key={m.month}
                   className="bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm flex items-center justify-between"
@@ -264,13 +298,14 @@ export default function ProgressPage() {
                       {formatMonthYear(new Date(m.month + '-01'))}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
-                      {m.days} días · Media {m.days > 0 ? Math.round(m.total / m.days) : 0} kcal/día
+                      {m.days} días · {m.total} kcal total
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-bold text-gray-800 dark:text-white">
-                      {m.total} kcal
+                    <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                      {avg}
                     </span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 ml-1">kcal/día</span>
                     {m.days > 0 && (
                       <p className="text-xs text-emerald-600 dark:text-emerald-400">
                         {m.inGoal}/{m.days} en objetivo
@@ -278,7 +313,8 @@ export default function ProgressPage() {
                     )}
                   </div>
                 </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
