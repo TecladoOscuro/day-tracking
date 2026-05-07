@@ -67,7 +67,7 @@ export default function MealForm({ onSave, onDelete, onClose, initialDescription
                 {showPresets ? 'ocultar' : 'frecuentes'}
               </button>
             </div>
-            {showPresets && <FoodPresetPicker onSelect={selectPreset} />}
+            {showPresets && <FoodPresetPicker onSelect={selectPreset} filterText={description} />}
           </div>
 
           <div>

@@ -31,6 +31,9 @@ export default function MorePage() {
   const [weightStr, setWeightStr] = useState(String(goals.weightTarget));
   const [orangeStr, setOrangeStr] = useState(String(goals.orangePct));
   const [redStr, setRedStr] = useState(String(goals.redPct));
+  const [editingPreset, setEditingPreset] = useState<{ id: number; name: string; calories: number } | null>(null);
+  const [presetName, setPresetName] = useState('');
+  const [presetCal, setPresetCal] = useState<number | ''>('');
 
   useEffect(() => { setLocalGoals(goals); setKcalStr(String(goals.kcalTarget)); setWeightStr(String(goals.weightTarget)); setOrangeStr(String(goals.orangePct)); setRedStr(String(goals.redPct)); }, [goals]);
   useEffect(() => { setLocalSettings(settings); }, [settings]);
@@ -394,32 +397,18 @@ export default function MorePage() {
           <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-3">Comidas frecuentes</h2>
           {presets.length === 0 ? (
             <p className="text-sm text-gray-400 dark:text-gray-500">
-              Las comidas que registres se guardarán aquí automáticamente para
-              reutilizarlas.
+              Las comidas que registres se guardarán aquí automáticamente.
             </p>
           ) : (
             <div className="space-y-1">
               {presets.map((p) => (
                 <div
                   key={p.id}
-                className="flex items-center justify-between py-2 border-b border-gray-50 dark:border-gray-800 last:border-0"
-              >
+                  onClick={() => { setEditingPreset({ id: p.id!, name: p.name, calories: p.calories }); setPresetName(p.name); setPresetCal(p.calories); }}
+                  className="flex items-center justify-between py-2 border-b border-gray-50 dark:border-gray-800 last:border-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 -mx-2 px-2 rounded-lg transition-colors"
+                >
                   <span className="text-sm text-gray-700 dark:text-gray-200">{p.name}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-indigo-600 font-medium">
-                      {p.calories} kcal
-                    </span>
-                    <button
-                      onClick={() => {
-                        if (window.confirm('¿Eliminar esta comida frecuente?')) {
-                          p.id !== undefined && deletePreset(p.id);
-                        }
-                      }}
-                      className="text-gray-300 hover:text-red-400 text-sm"
-                    >
-                      ×
-                    </button>
-                  </div>
+                  <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">{p.calories} kcal</span>
                 </div>
               ))}
             </div>
@@ -491,6 +480,52 @@ export default function MorePage() {
                 {importStatus}
               </p>
             )}
+          </div>
+        </div>
+      )}
+
+      {editingPreset && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={() => setEditingPreset(null)}>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-sm shadow-xl p-5 space-y-4" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-bold text-lg text-gray-900 dark:text-white">Editar comida</h3>
+            <input
+              type="text"
+              value={presetName}
+              onChange={(e) => setPresetName(e.target.value)}
+              className="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+              placeholder="Nombre"
+            />
+            <input
+              type="text"
+              inputMode="numeric"
+              value={presetCal}
+              onChange={(e) => { const v = e.target.value; setPresetCal(v === '' ? '' : Number(v)); }}
+              className="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+              placeholder="Calorías"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  if (window.confirm('¿Eliminar esta comida?')) {
+                    deletePreset(editingPreset.id);
+                  }
+                  setEditingPreset(null);
+                }}
+                className="flex-1 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm font-medium"
+              >
+                Eliminar
+              </button>
+              <button
+                onClick={async () => {
+                  await db.foodPresets.update(editingPreset.id, { name: presetName.trim() || editingPreset.name, calories: Number(presetCal) || editingPreset.calories });
+                  setEditingPreset(null);
+                  setTimeout(() => window.location.reload(), 200);
+                }}
+                className="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium"
+              >
+                Guardar
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMeals } from '../hooks/useMeals';
 import { useGoals } from '../hooks/useGoals';
+import { useFoodPresets } from '../hooks/useFoodPresets';
 import CalorieIndicator from '../components/CalorieIndicator';
 import MealForm from '../components/MealForm';
 import { getTodayStr, getPeriodLabel } from '../utils/dates';
@@ -10,6 +11,7 @@ export default function TodayPage() {
   const { addMeal, updateMeal, deleteMeal, getMealsByDate, getTotalByDate } =
     useMeals();
   const { goals } = useGoals();
+  const { presets, addPreset } = useFoodPresets();
   const [showForm, setShowForm] = useState(false);
   const [activePeriod, setActivePeriod] = useState<Period>('morning');
   const [editingMeal, setEditingMeal] = useState<{
@@ -32,6 +34,10 @@ export default function TodayPage() {
       setEditingMeal(null);
     } else {
       await addMeal({ date: today, period, ...data });
+      const key = data.description.toLowerCase().trim();
+      if (!presets.find((p) => p.name.toLowerCase().trim() === key)) {
+        addPreset({ name: data.description.trim(), calories: data.calories });
+      }
     }
   };
 

@@ -4,32 +4,41 @@ import type { Meal } from '../types';
 
 interface Props {
   onSelect: (data: { name: string; calories: number }) => void;
+  filterText?: string;
 }
 
-export default function FoodPresetPicker({ onSelect }: Props) {
+export default function FoodPresetPicker({ onSelect, filterText = '' }: Props) {
   const [suggestions, setSuggestions] = useState<{ name: string; calories: number }[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const all = await db.meals.orderBy('id').reverse().limit(200).toArray();
+      setLoading(true);
+      const all = await db.meals.orderBy('id').reverse().limit(300).toArray();
       const seen = new Map<string, Meal>();
       for (const m of all) {
         const key = m.description.toLowerCase().trim();
-        if (!seen.has(key)) {
-          seen.set(key, m);
-        }
+        if (!seen.has(key)) seen.set(key, m);
       }
-      const unique = Array.from(seen.values()).slice(0, 12);
+      const unique = Array.from(seen.values());
+      const filtered = filterText
+        ? unique.filter((m) => m.description.toLowerCase().includes(filterText.toLowerCase()))
+        : unique;
       setSuggestions(
-        unique.map((m) => ({ name: m.description, calories: m.calories }))
+        filtered.slice(0, 15).map((m) => ({ name: m.description, calories: m.calories }))
       );
+      setLoading(false);
     })();
-  }, []);
+  }, [filterText]);
+
+  if (loading) {
+    return <p className="text-xs text-gray-300 dark:text-gray-600 py-2">Cargando...</p>;
+  }
 
   if (suggestions.length === 0) {
     return (
       <p className="text-xs text-gray-400 dark:text-gray-500 py-2">
-        Registra tus primeras comidas y aparecerán aquí como sugerencias.
+        {filterText ? 'Sin coincidencias' : 'Registra tus primeras comidas y aparecerán aquí como sugerencias.'}
       </p>
     );
   }
@@ -44,9 +53,7 @@ export default function FoodPresetPicker({ onSelect }: Props) {
           className="w-full text-left px-3 py-2 text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900/30 flex justify-between border-b border-gray-50 dark:border-gray-800 last:border-0"
         >
           <span className="text-gray-700 dark:text-gray-200 truncate mr-2">{s.name}</span>
-          <span className="text-indigo-600 dark:text-indigo-400 font-medium shrink-0">
-            {s.calories} kcal
-          </span>
+          <span className="text-indigo-600 dark:text-indigo-400 font-medium shrink-0">{s.calories} kcal</span>
         </button>
       ))}
     </div>

@@ -214,10 +214,11 @@ export default function ProgressPage() {
 
       {tab === 'kcal' && (
         <>
-          <div className="flex items-center gap-2 mb-3 overflow-x-auto pb-1 -mx-1 px-1">
+          <div className="flex items-center gap-2 mb-3">
             <span className="text-[10px] text-gray-400 dark:text-gray-500 shrink-0">Rango:</span>
-            <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5 shrink-0">
-              {([30, 90, 365] as Range[]).map((r) => (
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5 shrink-0">
+                {([30, 90, 365] as Range[]).map((r) => (
                 <button
                   key={r}
                   onClick={() => { setRange(r); setSelectedYear('all'); }}
@@ -239,6 +240,7 @@ export default function ProgressPage() {
                 </button>
               ))}
             </div>
+          </div>
           </div>
           <CalorieChart
             data={calData}
