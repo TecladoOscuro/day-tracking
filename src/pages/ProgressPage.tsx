@@ -261,6 +261,7 @@ export default function ProgressPage() {
               <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
                 {selectedYear} — mensual
               </h3>
+              <p className="text-[10px] text-gray-400 dark:text-gray-600 -mt-1">Solo días completados (hoy excluido)</p>
               {yearMonthlyData.map((m) => {
                 const avg = m.days > 0 ? Math.round(m.total / m.days) : 0;
                 return (
@@ -304,10 +305,13 @@ export default function ProgressPage() {
 
           {tab === 'weight' ? (
             <>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
-                  Resumen mensual de peso
-                </h3>
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                    Resumen mensual de peso
+                  </h3>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-600">Solo días completados (hoy excluido)</p>
+                </div>
                 <div className="flex items-center gap-1">
                   <select
                     value={selectedYear}
@@ -367,9 +371,12 @@ export default function ProgressPage() {
           ) : (
             <>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
-                  Resumen mensual
-                </h3>
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                    Resumen mensual
+                  </h3>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-600">Solo días completados (hoy excluido)</p>
+                </div>
                 <div className="flex items-center gap-1">
                   <select
                     value={selectedYear}
