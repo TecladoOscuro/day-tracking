@@ -31,7 +31,7 @@ export interface WeightEntry {
   id?: number;
   date: string;
   weight: number;
-  photo?: string;
+  photos?: string[];
   note?: string;
 }
 

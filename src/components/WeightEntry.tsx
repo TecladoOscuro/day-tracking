@@ -3,10 +3,11 @@ import type { WeightEntry } from '../types';
 
 interface Props {
   onSave: (entry: Omit<WeightEntry, 'id'>) => void;
+  onDelete?: () => void;
   onClose: () => void;
   initialDate?: string;
   initialWeight?: number;
-  initialPhoto?: string;
+  initialPhotos?: string[];
   initialNote?: string;
 }
 
@@ -40,15 +41,16 @@ function compressPhoto(file: File): Promise<string> {
 
 export default function WeightEntry({
   onSave,
+  onDelete,
   onClose,
   initialDate,
   initialWeight,
-  initialPhoto,
+  initialPhotos = [],
   initialNote,
 }: Props) {
   const [date, setDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
   const [weight, setWeight] = useState<number | ''>(initialWeight ?? '');
-  const [photo, setPhoto] = useState(initialPhoto || '');
+  const [photos, setPhotos] = useState<string[]>(initialPhotos);
   const [note, setNote] = useState(initialNote || '');
   const [photoError, setPhotoError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,17 +61,22 @@ export default function WeightEntry({
     setPhotoError('');
     try {
       const base64 = await compressPhoto(file);
-      setPhoto(base64);
+      setPhotos((prev) => [...prev, base64]);
     } catch {
       setPhotoError('No se pudo cargar la imagen. Intenta con otra.');
     }
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const removePhoto = (index: number) => {
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!weight || !date) return;
     const data: Omit<WeightEntry, 'id'> = { date, weight: Number(weight) };
-    if (photo) data.photo = photo;
+    if (photos.length > 0) data.photos = photos;
     if (note.trim()) data.note = note.trim();
     onSave(data);
     onClose();
@@ -81,7 +88,9 @@ export default function WeightEntry({
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto shadow-xl">
         <div className="px-5 pt-4 pb-2 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
-          <h3 className="font-bold text-lg text-gray-900 dark:text-white">Registrar peso</h3>
+          <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+            {onDelete ? 'Editar peso' : 'Registrar peso'}
+          </h3>
           <button
             onClick={onClose}
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-2xl leading-none"
@@ -91,93 +100,46 @@ export default function WeightEntry({
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
-            <label htmlFor="weight-date" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-              Fecha
-            </label>
-            <input
-              id="weight-date"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className={inputClass + ' [color-scheme:dark]'}
-            />
+            <label htmlFor="weight-date" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Fecha</label>
+            <input id="weight-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputClass + ' [color-scheme:dark]'} />
           </div>
           <div>
-            <label htmlFor="weight-kg" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-              Peso (kg)
-            </label>
-            <input
-              id="weight-kg"
-              type="number"
-              value={weight}
-              onChange={(e) => {
-                const val = e.target.value;
-                setWeight(val === '' ? '' : Number(val));
-              }}
-              placeholder="85.5"
-              step="0.1"
-              min={30}
-              max={300}
-              className={inputClass}
-            />
+            <label htmlFor="weight-kg" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Peso (kg)</label>
+            <input id="weight-kg" type="number" value={weight} onChange={(e) => { const val = e.target.value; setWeight(val === '' ? '' : Number(val)); }} placeholder="85.5" step="0.1" min={30} max={300} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-              Foto (opcional)
-            </label>
-            {photoError && (
-              <p className="text-xs text-red-500 mt-1">{photoError}</p>
-            )}
-            {photo ? (
-              <div className="relative inline-block">
-                <img
-                  src={photo}
-                  alt="Progreso"
-                  className="w-24 h-24 object-cover rounded-xl"
-                />
-                <button
-                  type="button"
-                  onClick={() => setPhoto('')}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs shadow"
-                >
-                  ×
-                </button>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Fotos ({photos.length})</label>
+            {photoError && <p className="text-xs text-red-500 mb-1">{photoError}</p>}
+            {photos.length > 0 && (
+              <div className="flex gap-2 flex-wrap mb-2">
+                {photos.map((p, i) => (
+                  <div key={i} className="relative">
+                    <img src={p} alt={`Foto ${i + 1}`} className="w-16 h-16 object-cover rounded-xl" />
+                    <button type="button" onClick={() => removePhoto(i)} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 text-[10px] flex items-center justify-center shadow">×</button>
+                  </div>
+                ))}
               </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="px-4 py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-sm text-gray-400 dark:text-gray-500 hover:border-indigo-400 hover:text-indigo-500 w-full transition-colors"
-              >
-                📸 Tomar foto o elegir de galería
+            )}
+            <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-sm text-gray-400 dark:text-gray-500 hover:border-indigo-400 hover:text-indigo-500 w-full transition-colors">
+              📸 Añadir foto
+            </button>
+            <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Nota (opcional)</label>
+            <input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Ej. Después de entrenar, en ayunas..." className={inputClass} />
+          </div>
+
+          <div className="flex gap-2 pt-2">
+            {onDelete && (
+              <button type="button" onClick={onDelete} className="px-4 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm font-medium hover:bg-red-100 dark:hover:bg-red-900/40 active:scale-95 transition-all flex-1">
+                Eliminar
               </button>
             )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handlePhoto}
-              className="hidden"
-            />
+            <button type="submit" className="px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 active:scale-[0.98] transition-all flex-1 shadow">
+              Guardar
+            </button>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-              Nota (opcional)
-            </label>
-            <input
-              type="text"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Ej. Después de entrenar, en ayunas..."
-              className={inputClass}
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 active:scale-[0.98] transition-all shadow"
-          >
-            Guardar
-          </button>
         </form>
       </div>
     </div>

@@ -6,25 +6,34 @@ interface Props {
 }
 
 export default function PhotoCompare({ weights }: Props) {
-  const photos = weights.filter((w) => w.photo);
+  const allPhotos = weights.flatMap((w) =>
+    (w.photos || []).map((photo, idx) => ({
+      photo,
+      date: w.date,
+      weight: w.weight,
+      note: w.note,
+      key: `${w.date}-${idx}`,
+    }))
+  );
+
   const [leftIdx, setLeftIdx] = useState(0);
-  const [rightIdx, setRightIdx] = useState(Math.min(photos.length - 1, 1));
+  const [rightIdx, setRightIdx] = useState(Math.min(allPhotos.length - 1, 1));
 
   useEffect(() => {
     setLeftIdx(0);
-    setRightIdx(Math.min(photos.length - 1, 1));
-  }, [photos.length]);
+    setRightIdx(Math.min(allPhotos.length - 1, 1));
+  }, [allPhotos.length]);
 
-  if (photos.length < 2) {
+  if (allPhotos.length < 2) {
     return (
-      <div className="text-center py-6 text-gray-400 text-sm">
-        Añade al menos 2 registros con foto para comparar
+      <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm text-center py-6 text-gray-400 text-sm">
+        Necesitas al menos 2 fotos en total para comparar
       </div>
     );
   }
 
-  const left = photos[leftIdx];
-  const right = photos[rightIdx];
+  const left = allPhotos[leftIdx];
+  const right = allPhotos[rightIdx];
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm">
@@ -34,18 +43,14 @@ export default function PhotoCompare({ weights }: Props) {
       <div className="grid grid-cols-2 gap-2 mb-3">
         <div>
           <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
-            <img
-              src={left.photo}
-              alt={left.date}
-              className="w-full h-full object-cover"
-            />
+            <img src={left.photo} alt={left.date} className="w-full h-full object-cover" />
           </div>
           <select
             value={leftIdx}
             onChange={(e) => setLeftIdx(Number(e.target.value))}
             className="w-full mt-1 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 py-1 px-2"
           >
-            {photos.map((p, i) => (
+            {allPhotos.map((p, i) => (
               <option key={i} value={i}>
                 {new Date(p.date).toLocaleDateString('es-ES')} - {p.weight}kg
               </option>
@@ -54,18 +59,14 @@ export default function PhotoCompare({ weights }: Props) {
         </div>
         <div>
           <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
-            <img
-              src={right.photo}
-              alt={right.date}
-              className="w-full h-full object-cover"
-            />
+            <img src={right.photo} alt={right.date} className="w-full h-full object-cover" />
           </div>
           <select
             value={rightIdx}
             onChange={(e) => setRightIdx(Number(e.target.value))}
             className="w-full mt-1 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 py-1 px-2"
           >
-            {photos.map((p, i) => (
+            {allPhotos.map((p, i) => (
               <option key={i} value={i}>
                 {new Date(p.date).toLocaleDateString('es-ES')} - {p.weight}kg
               </option>
@@ -74,13 +75,10 @@ export default function PhotoCompare({ weights }: Props) {
         </div>
       </div>
       {left && right && (
-        <p className="text-center text-sm text-gray-600">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
           De {left.weight}kg a {right.weight}kg →{' '}
-          <span
-            className={`font-bold ${right.weight <= left.weight ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}
-          >
-            {right.weight <= left.weight ? '↓' : '↑'}{' '}
-            {Math.abs(right.weight - left.weight).toFixed(1)} kg
+          <span className={`font-bold ${right.weight <= left.weight ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
+            {right.weight <= left.weight ? '↓' : '↑'} {Math.abs(right.weight - left.weight).toFixed(1)} kg
           </span>
         </p>
       )}
