@@ -116,6 +116,30 @@ export default function ProgressPage() {
     return best;
   }, [meals, goals.kcalTarget, getTotalByDate]);
 
+  const weightSummary = useMemo(() => {
+    const map = new Map<string, { weights: number[]; count: number; avg: number; min: number; max: number }>();
+    weights.forEach((w) => {
+      const month = w.date.substring(0, 7);
+      if (selectedYear !== 'all' && !month.startsWith(String(selectedYear))) return;
+      if (!map.has(month)) map.set(month, { weights: [], count: 0, avg: 0, min: Infinity, max: -Infinity });
+      const entry = map.get(month)!;
+      entry.weights.push(w.weight);
+      entry.count++;
+      entry.min = Math.min(entry.min, w.weight);
+      entry.max = Math.max(entry.max, w.weight);
+    });
+    const entries = Array.from(map.entries())
+      .sort((a, b) => b[0].localeCompare(a[0]))
+      .map(([month, data]) => ({
+        month,
+        count: data.count,
+        avg: data.weights.reduce((s, v) => s + v, 0) / data.weights.length,
+        min: data.min === Infinity ? 0 : data.min,
+        max: data.max === -Infinity ? 0 : data.max,
+      }));
+    return entries;
+  }, [weights, selectedYear]);
+
   const monthlySummary = useMemo(() => {
     const map = new Map<string, { total: number; days: number; inGoal: number }>();
     meals.forEach((m) => {
@@ -267,29 +291,94 @@ export default function ProgressPage() {
 
       {(!yearMonthlyData || selectedYear === 'all' || tab === 'weight') && (
         <div className="mt-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
-              Resumen mensual
-            </h3>
-            <div className="flex items-center gap-1">
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                className="text-xs border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg px-2 py-1"
-              >
-                <option value="all">Todo</option>
-                {dataYears.map((y) => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-              <button
-                onClick={handleExport}
-                className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline ml-2"
-              >
-                📤 Exportar
-              </button>
-            </div>
-          </div>
+
+          {tab === 'weight' ? (
+            <>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                  Resumen mensual de peso
+                </h3>
+                <div className="flex items-center gap-1">
+                  <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                    className="text-xs border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg px-2 py-1"
+                  >
+                    <option value="all">Todo</option>
+                    {dataYears.map((y) => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={handleExport}
+                    className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline ml-2"
+                  >
+                    📤 Exportar
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                {weightSummary.length === 0 ? (
+                  <p className="text-xs text-gray-400 dark:text-gray-500">Sin datos aún</p>
+                ) : (
+                  weightSummary.map((m, i) => {
+                    const prev = i < weightSummary.length - 1 ? weightSummary[i + 1] : null;
+                    const diff = prev ? Math.round((m.avg - prev.avg) * 10) / 10 : 0;
+                    return (
+                    <div
+                      key={m.month}
+                      className="bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm flex items-center justify-between"
+                    >
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                          {formatMonthYear(new Date(m.month + '-01'))}
+                        </p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">
+                          {m.count} registros · {m.min}–{m.max} kg
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                          {m.avg.toFixed(1)}
+                        </span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500 ml-1">kg</span>
+                        {diff !== 0 && (
+                          <p className={`text-xs font-medium ${diff < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
+                            {diff < 0 ? '↓' : '↑'} {Math.abs(diff).toFixed(1)} kg
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    );
+                  })
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                  Resumen mensual
+                </h3>
+                <div className="flex items-center gap-1">
+                  <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                    className="text-xs border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg px-2 py-1"
+                  >
+                    <option value="all">Todo</option>
+                    {dataYears.map((y) => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={handleExport}
+                    className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline ml-2"
+                  >
+                    📤 Exportar
+                  </button>
+                </div>
+              </div>
           <div className="space-y-2">
             {monthlySummary.length === 0 ? (
               <p className="text-xs text-gray-400 dark:text-gray-500">Sin datos aún</p>
@@ -322,9 +411,11 @@ export default function ProgressPage() {
                   </div>
                 </div>
                 );
-              })
+              }              )
             )}
           </div>
+            </>
+          )}
         </div>
       )}
     </div>
