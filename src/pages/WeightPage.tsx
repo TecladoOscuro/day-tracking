@@ -73,7 +73,7 @@ export default function WeightPage() {
       {latest ? (
         <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-4 text-white mb-4 shadow-lg">
           <p className="text-sm opacity-80">Peso actual</p>
-          <p className="text-3xl font-bold">{latest.weight} kg</p>
+          <p className="text-3xl font-bold">{latest.weight.toFixed(1)} kg</p>
           {imc && (
             <div className="flex items-center gap-2 mt-1">
               <span className="text-sm opacity-80">IMC {imc.toFixed(1)}</span>
@@ -156,7 +156,7 @@ export default function WeightPage() {
                 </p>
                 {w.note && <p className="text-xs text-gray-400 dark:text-gray-500 truncate">{w.note}</p>}
               </div>
-              <span className="font-bold text-gray-800 dark:text-white">{w.weight} kg</span>
+              <span className="font-bold text-gray-800 dark:text-white">{w.weight.toFixed(1)} kg</span>
             </div>
           ))
         )}

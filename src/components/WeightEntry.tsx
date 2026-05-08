@@ -105,7 +105,7 @@ export default function WeightEntry({
           </div>
           <div>
             <label htmlFor="weight-kg" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Peso (kg)</label>
-            <input id="weight-kg" type="number" value={weight} onChange={(e) => { const val = e.target.value; setWeight(val === '' ? '' : Number(val)); }} placeholder="85.5" step="0.1" min={30} max={300} className={inputClass} />
+            <input id="weight-kg" type="text" inputMode="decimal" value={weight} onChange={(e) => { const val = e.target.value.replace(',', '.'); setWeight(val === '' ? '' : Number(val)); }} placeholder="85.5" className={inputClass} />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Fotos ({photos.length})</label>

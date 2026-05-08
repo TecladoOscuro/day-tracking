@@ -43,7 +43,7 @@ export default function ProgressPhotos({ weights }: Props) {
               <p className="text-white text-[10px] font-medium">
                 {new Date(p.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
               </p>
-              <p className="text-white/70 text-[9px]">{p.weight} kg</p>
+              <p className="text-white/70 text-[9px]">{p.weight.toFixed(1)} kg</p>
             </div>
           </div>
         ))}
@@ -61,7 +61,7 @@ export default function ProgressPhotos({ weights }: Props) {
           <img src={photos[fullscreen].photo} alt={photos[fullscreen].date} className="max-w-full max-h-[90vh] object-contain" />
           <div className="absolute bottom-8 left-0 right-0 text-center">
             <p className="text-white text-sm font-medium">{new Date(photos[fullscreen].date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-            <p className="text-white/70 text-xs">{photos[fullscreen].weight} kg</p>
+            <p className="text-white/70 text-xs">{photos[fullscreen].weight.toFixed(1)} kg</p>
           </div>
         </div>
       )}

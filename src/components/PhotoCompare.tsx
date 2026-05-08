@@ -52,7 +52,7 @@ export default function PhotoCompare({ weights }: Props) {
           >
             {allPhotos.map((p, i) => (
               <option key={i} value={i}>
-                {new Date(p.date).toLocaleDateString('es-ES')} - {p.weight}kg
+                {new Date(p.date).toLocaleDateString('es-ES')} - {p.weight.toFixed(1)} kg
               </option>
             ))}
           </select>
@@ -68,7 +68,7 @@ export default function PhotoCompare({ weights }: Props) {
           >
             {allPhotos.map((p, i) => (
               <option key={i} value={i}>
-                {new Date(p.date).toLocaleDateString('es-ES')} - {p.weight}kg
+                {new Date(p.date).toLocaleDateString('es-ES')} - {p.weight.toFixed(1)} kg
               </option>
             ))}
           </select>
@@ -76,7 +76,7 @@ export default function PhotoCompare({ weights }: Props) {
       </div>
       {left && right && (
         <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-          De {left.weight}kg a {right.weight}kg →{' '}
+          De {left.weight.toFixed(1)} kg a {right.weight.toFixed(1)} kg →{' '}
           <span className={`font-bold ${right.weight <= left.weight ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
             {right.weight <= left.weight ? '↓' : '↑'} {Math.abs(right.weight - left.weight).toFixed(1)} kg
           </span>
