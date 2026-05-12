@@ -53,6 +53,7 @@ export default function WeightEntry({
   const [photos, setPhotos] = useState<string[]>(initialPhotos);
   const [note, setNote] = useState(initialNote || '');
   const [photoError, setPhotoError] = useState('');
+  const [viewerPhoto, setViewerPhoto] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,7 +102,7 @@ export default function WeightEntry({
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
             <label htmlFor="weight-date" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Fecha</label>
-            <input id="weight-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputClass + ' [color-scheme:dark]'} />
+            <input id="weight-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputClass + ' min-w-0 [color-scheme:dark]'} />
           </div>
           <div>
             <label htmlFor="weight-kg" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Peso (kg)</label>
@@ -114,7 +115,7 @@ export default function WeightEntry({
               <div className="flex gap-2 flex-wrap mb-2">
                 {photos.map((p, i) => (
                   <div key={i} className="relative">
-                    <img src={p} alt={`Foto ${i + 1}`} className="w-16 h-16 object-cover rounded-xl" />
+                    <img src={p} alt={`Foto ${i + 1}`} className="w-16 h-16 object-cover rounded-xl cursor-pointer active:scale-95 transition-transform" onClick={() => setViewerPhoto(p)} />
                     <button type="button" onClick={() => removePhoto(i)} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 text-[10px] flex items-center justify-center shadow">×</button>
                   </div>
                 ))}
@@ -142,6 +143,18 @@ export default function WeightEntry({
           </div>
         </form>
       </div>
+
+      {viewerPhoto && (
+        <div className="fixed inset-0 z-[60] bg-black flex items-center justify-center" onClick={() => setViewerPhoto(null)}>
+          <button
+            onClick={() => setViewerPhoto(null)}
+            className="absolute top-4 right-4 text-white/80 hover:text-white text-3xl leading-none z-10"
+          >
+            ×
+          </button>
+          <img src={viewerPhoto} alt="Vista ampliada" className="max-w-full max-h-[90vh] object-contain" onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
     </div>
   );
 }

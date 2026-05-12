@@ -135,15 +135,9 @@ export default function WeightPage() {
               className="bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 active:bg-gray-100 dark:active:bg-gray-700 transition-colors"
             >
               {w.photos && w.photos.length > 0 ? (
-                <div className="flex gap-1 shrink-0">
-                  {w.photos.slice(0, 3).map((p, i) => (
-                    <img key={i} src={p} alt={`${w.date}-${i}`} className="w-12 h-12 rounded-lg object-cover" />
-                  ))}
-                  {w.photos.length > 3 && (
-                    <div className="w-12 h-12 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500">
-                      +{w.photos.length - 3}
-                    </div>
-                  )}
+                <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0 relative">
+                  <span className="text-gray-400 text-lg">📸</span>
+                  <span className="absolute -top-1 -right-1 bg-indigo-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{w.photos.length}</span>
                 </div>
               ) : (
                 <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0">
