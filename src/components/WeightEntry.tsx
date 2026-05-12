@@ -105,7 +105,9 @@ export default function WeightEntry({
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
             <label htmlFor="weight-date" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Fecha</label>
-            <input id="weight-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputClass + ' min-w-0 [color-scheme:dark]'} />
+            <div className="overflow-hidden rounded-xl">
+              <input id="weight-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputClass + ' min-w-0 [color-scheme:dark]'} style={{ minWidth: 0, width: '100%', boxSizing: 'border-box' }} />
+            </div>
           </div>
           <div>
             <label htmlFor="weight-kg" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Peso (kg)</label>
