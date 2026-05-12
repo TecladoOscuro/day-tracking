@@ -121,44 +121,43 @@ export default function PhotoCompare({ weights }: Props) {
 
       {viewerIdx !== null && (
         <div
-          className="fixed inset-0 z-[60] bg-black flex items-center justify-center"
-          onClick={closeViewer}
+          className="fixed inset-0 z-[60] bg-black flex flex-col"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <button
-            onClick={closeViewer}
-            className="absolute top-4 right-4 text-white/80 hover:text-white text-3xl leading-none z-10"
-          >
-            ×
-          </button>
-
-          {viewerIdx > 0 && (
+          <div className="flex justify-end p-4 shrink-0" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
             <button
-              onClick={(e) => { e.stopPropagation(); goPrev(); }}
-              className="absolute left-2 top-1/2 -translate-y-1/2 text-white/70 hover:text-white text-4xl leading-none z-10 px-2"
+              onClick={closeViewer}
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white text-xl active:scale-90 transition-all"
             >
-              ‹
+              ×
             </button>
-          )}
-
-          <img
-            src={allPhotos[viewerIdx].photo}
-            alt={allPhotos[viewerIdx].date}
-            className="max-w-full max-h-[90vh] object-contain select-none"
-            onClick={(e) => e.stopPropagation()}
-          />
-
-          {viewerIdx < allPhotos.length - 1 && (
-            <button
-              onClick={(e) => { e.stopPropagation(); goNext(); }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-white/70 hover:text-white text-4xl leading-none z-10 px-2"
-            >
-              ›
-            </button>
-          )}
-
-          <div className="absolute bottom-8 left-0 right-0 text-center">
+          </div>
+          <div className="flex-1 flex items-center justify-center relative min-h-0" onClick={closeViewer}>
+            {viewerIdx > 0 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white text-2xl active:scale-90 transition-all z-10"
+              >
+                ‹
+              </button>
+            )}
+            <img
+              src={allPhotos[viewerIdx].photo}
+              alt={allPhotos[viewerIdx].date}
+              className="max-w-full max-h-full object-contain select-none"
+              onClick={(e) => e.stopPropagation()}
+            />
+            {viewerIdx < allPhotos.length - 1 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); goNext(); }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white text-2xl active:scale-90 transition-all z-10"
+              >
+                ›
+              </button>
+            )}
+          </div>
+          <div className="text-center pb-8 shrink-0" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
             <p className="text-white/80 text-sm">
               {new Date(allPhotos[viewerIdx].date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
             </p>

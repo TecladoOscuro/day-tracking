@@ -53,7 +53,9 @@ export default function WeightEntry({
   const [photos, setPhotos] = useState<string[]>(initialPhotos);
   const [note, setNote] = useState(initialNote || '');
   const [photoError, setPhotoError] = useState('');
-  const [viewerPhoto, setViewerPhoto] = useState<string | null>(null);
+  const [viewerIdx, setViewerIdx] = useState<number | null>(null);
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,7 +117,7 @@ export default function WeightEntry({
               <div className="flex gap-2 flex-wrap mb-2">
                 {photos.map((p, i) => (
                   <div key={i} className="relative">
-                    <img src={p} alt={`Foto ${i + 1}`} className="w-16 h-16 object-cover rounded-xl cursor-pointer active:scale-95 transition-transform" onClick={() => setViewerPhoto(p)} />
+                    <img src={p} alt={`Foto ${i + 1}`} className="w-16 h-16 object-cover rounded-xl cursor-pointer active:scale-95 transition-transform" onClick={() => setViewerIdx(i)} />
                     <button type="button" onClick={() => removePhoto(i)} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 text-[10px] flex items-center justify-center shadow">×</button>
                   </div>
                 ))}
@@ -144,15 +146,54 @@ export default function WeightEntry({
         </form>
       </div>
 
-      {viewerPhoto && (
-        <div className="fixed inset-0 z-[60] bg-black flex items-center justify-center" onClick={() => setViewerPhoto(null)}>
-          <button
-            onClick={() => setViewerPhoto(null)}
-            className="absolute top-4 right-4 text-white/80 hover:text-white text-3xl leading-none z-10"
-          >
-            ×
-          </button>
-          <img src={viewerPhoto} alt="Vista ampliada" className="max-w-full max-h-[90vh] object-contain" onClick={(e) => e.stopPropagation()} />
+      {viewerIdx !== null && (
+        <div
+          className="fixed inset-0 z-[60] bg-black flex flex-col"
+          onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; touchStartY.current = e.touches[0].clientY; }}
+          onTouchEnd={(e) => {
+            const dx = e.changedTouches[0].clientX - touchStartX.current;
+            const dy = e.changedTouches[0].clientY - touchStartY.current;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+              if (dx < 0 && viewerIdx < photos.length - 1) setViewerIdx(viewerIdx + 1);
+              else if (dx > 0 && viewerIdx > 0) setViewerIdx(viewerIdx - 1);
+            }
+          }}
+        >
+          <div className="flex justify-end p-4 shrink-0" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
+            <button
+              onClick={() => setViewerIdx(null)}
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white text-xl active:scale-90 transition-all"
+            >
+              ×
+            </button>
+          </div>
+          <div className="flex-1 flex items-center justify-center relative min-h-0" onClick={() => setViewerIdx(null)}>
+            {viewerIdx > 0 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setViewerIdx(viewerIdx - 1); }}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white text-2xl active:scale-90 transition-all z-10"
+              >
+                ‹
+              </button>
+            )}
+            <img
+              src={photos[viewerIdx]}
+              alt={`Foto ${viewerIdx + 1}`}
+              className="max-w-full max-h-full object-contain select-none"
+              onClick={(e) => e.stopPropagation()}
+            />
+            {viewerIdx < photos.length - 1 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setViewerIdx(viewerIdx + 1); }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white text-2xl active:scale-90 transition-all z-10"
+              >
+                ›
+              </button>
+            )}
+          </div>
+          <div className="text-center pb-8 shrink-0" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
+            <p className="text-white/40 text-[10px]">{viewerIdx + 1} / {photos.length}</p>
+          </div>
         </div>
       )}
     </div>
