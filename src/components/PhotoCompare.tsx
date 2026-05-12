@@ -18,7 +18,7 @@ export default function PhotoCompare({ weights }: Props) {
 
   const [leftIdx, setLeftIdx] = useState(0);
   const [rightIdx, setRightIdx] = useState(Math.min(allPhotos.length - 1, 1));
-  const [viewerIdx, setViewerIdx] = useState<number | null>(null);
+  const [viewerIdx, setViewerIdx] = useState<0 | 1 | null>(null);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
 
@@ -27,16 +27,11 @@ export default function PhotoCompare({ weights }: Props) {
     setRightIdx(Math.min(allPhotos.length - 1, 1));
   }, [allPhotos.length]);
 
-  const openViewer = (idx: number) => setViewerIdx(idx);
+  const comparePhotos = [allPhotos[leftIdx], allPhotos[rightIdx]];
+  const isSamePhoto = leftIdx === rightIdx;
+
+  const openViewer = (side: 0 | 1) => setViewerIdx(side);
   const closeViewer = () => setViewerIdx(null);
-
-  const goPrev = () => {
-    setViewerIdx((prev) => (prev !== null && prev > 0 ? prev - 1 : prev));
-  };
-
-  const goNext = () => {
-    setViewerIdx((prev) => (prev !== null && prev < allPhotos.length - 1 ? prev + 1 : prev));
-  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -47,8 +42,8 @@ export default function PhotoCompare({ weights }: Props) {
     const dx = e.changedTouches[0].clientX - touchStartX.current;
     const dy = e.changedTouches[0].clientY - touchStartY.current;
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-      if (dx < 0) goNext();
-      else goPrev();
+      if (dx < 0 && viewerIdx === 0) setViewerIdx(1);
+      else if (dx > 0 && viewerIdx === 1) setViewerIdx(0);
     }
   };
 
@@ -73,7 +68,7 @@ export default function PhotoCompare({ weights }: Props) {
           <div>
             <div
               className="aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 cursor-pointer active:scale-[0.98] transition-transform"
-              onClick={() => openViewer(leftIdx)}
+              onClick={() => openViewer(0)}
             >
               <img src={left.photo} alt={left.date} className="w-full h-full object-cover" />
             </div>
@@ -92,7 +87,7 @@ export default function PhotoCompare({ weights }: Props) {
           <div>
             <div
               className="aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 cursor-pointer active:scale-[0.98] transition-transform"
-              onClick={() => openViewer(rightIdx)}
+              onClick={() => openViewer(1)}
             >
               <img src={right.photo} alt={right.date} className="w-full h-full object-cover" />
             </div>
@@ -134,23 +129,23 @@ export default function PhotoCompare({ weights }: Props) {
             </button>
           </div>
           <div className="flex-1 flex items-center justify-center relative min-h-0" onClick={closeViewer}>
-            {viewerIdx > 0 && (
+            {!isSamePhoto && viewerIdx === 1 && (
               <button
-                onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                onClick={(e) => { e.stopPropagation(); setViewerIdx(0); }}
                 className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white text-2xl active:scale-90 transition-all z-10"
               >
                 ‹
               </button>
             )}
             <img
-              src={allPhotos[viewerIdx].photo}
-              alt={allPhotos[viewerIdx].date}
+              src={comparePhotos[viewerIdx].photo}
+              alt={comparePhotos[viewerIdx].date}
               className="max-w-full max-h-full object-contain select-none"
               onClick={(e) => e.stopPropagation()}
             />
-            {viewerIdx < allPhotos.length - 1 && (
+            {!isSamePhoto && viewerIdx === 0 && (
               <button
-                onClick={(e) => { e.stopPropagation(); goNext(); }}
+                onClick={(e) => { e.stopPropagation(); setViewerIdx(1); }}
                 className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white text-2xl active:scale-90 transition-all z-10"
               >
                 ›
@@ -159,10 +154,12 @@ export default function PhotoCompare({ weights }: Props) {
           </div>
           <div className="text-center pb-8 shrink-0" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
             <p className="text-white/80 text-sm">
-              {new Date(allPhotos[viewerIdx].date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+              {new Date(comparePhotos[viewerIdx].date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
             </p>
-            <p className="text-white/60 text-xs">{allPhotos[viewerIdx].weight.toFixed(1)} kg</p>
-            <p className="text-white/40 text-[10px] mt-1">{viewerIdx + 1} / {allPhotos.length}</p>
+            <p className="text-white/60 text-xs">{comparePhotos[viewerIdx].weight.toFixed(1)} kg</p>
+            <p className="text-white/40 text-[10px] mt-1">
+              {isSamePhoto ? '1 / 1' : `${viewerIdx + 1} / 2`}
+            </p>
           </div>
         </div>
       )}
