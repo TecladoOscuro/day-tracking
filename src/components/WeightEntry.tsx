@@ -49,7 +49,7 @@ export default function WeightEntry({
   initialNote,
 }: Props) {
   const [date, setDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
-  const [weight, setWeight] = useState<number | ''>(initialWeight ?? '');
+  const [weight, setWeight] = useState(initialWeight != null ? String(initialWeight) : '');
   const [photos, setPhotos] = useState<string[]>(initialPhotos);
   const [note, setNote] = useState(initialNote || '');
   const [photoError, setPhotoError] = useState('');
@@ -77,8 +77,9 @@ export default function WeightEntry({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!weight || !date) return;
-    const data: Omit<WeightEntry, 'id'> = { date, weight: Number(weight) };
+    const numWeight = parseFloat(weight);
+    if (isNaN(numWeight) || !date) return;
+    const data: Omit<WeightEntry, 'id'> = { date, weight: numWeight };
     if (photos.length > 0) data.photos = photos;
     if (note.trim()) data.note = note.trim();
     onSave(data);
@@ -108,7 +109,7 @@ export default function WeightEntry({
           </div>
           <div>
             <label htmlFor="weight-kg" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Peso (kg)</label>
-            <input id="weight-kg" type="text" inputMode="decimal" value={weight} onChange={(e) => { const val = e.target.value.replace(',', '.'); setWeight(val === '' ? '' : Number(val)); }} placeholder="85.5" className={inputClass} />
+            <input id="weight-kg" type="text" inputMode="decimal" value={weight} onChange={(e) => { const val = e.target.value.replace(',', '.'); if (val === '' || /^\d*\.?\d*$/.test(val)) setWeight(val); }} placeholder="85.5" className={inputClass} />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Fotos ({photos.length})</label>
